@@ -28,10 +28,33 @@ ajax.call({
 module.exports = function () {
   'use strict';
 
-  var call = function call(data) {
+  /**
+   * Function for checking is it FormData object to send.
+   *
+   * @param {Object} object to check
+   * @return boolean
+   */
+  let isFormData = function (object) {
+    return typeof object.append === 'function';
+  };
+
+  /**
+   * Call AJAX request function
+   *
+   * @param {Object} data
+   * @param {String} data.type        'GET' or 'POST' request type
+   * @param {String} data.url         request url
+   * @param {String} data.data        data to send
+   * @param {Function} data.before    call this function before request
+   * @param {Function} data.progress  callback function for progress
+   * @param {Function} data.success   success function
+   * @param {Function} data.error     error function
+   * @param {Function} data.atfer     call this function after request
+   */
+  let call = function call(data) {
     if (!data || !data.url) return;
 
-    var XMLHTTP = window.XMLHttpRequest ? new window.XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP'),
+    let XMLHTTP = window.XMLHttpRequest ? new window.XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP'),
         progressCallback = data.progress || null,
         successFunction = data.success || function () {},
         errorFunction = data.error || function () {},
@@ -44,7 +67,7 @@ module.exports = function () {
     data.data = data.data || '';
     data['content-type'] = data['content-type'] || 'application/json; charset=utf-8';
 
-    if (data.type == 'GET' && data.data) {
+    if (data.type === 'GET' && data.data) {
       data.url = /\?/.test(data.url) ? data.url + '&' + data.data : data.url + '?' + data.data;
     }
 
@@ -52,7 +75,7 @@ module.exports = function () {
       XMLHTTP.withCredentials = true;
     }
 
-    if (beforeFunction && typeof beforeFunction == 'function') {
+    if (beforeFunction && typeof beforeFunction === 'function') {
       beforeFunction();
     }
 
@@ -62,9 +85,9 @@ module.exports = function () {
      * If data is not FormData then create FormData
      */
     if (!isFormData(data.data)) {
-      var requestData = new window.FormData();
+      let requestData = new window.FormData();
 
-      for (var key in data.data) {
+      for (let key in data.data) {
         requestData.append(key, data.data[key]);
       }
 
@@ -74,13 +97,13 @@ module.exports = function () {
     /**
      * Add progress listener
      */
-    if (progressCallback && typeof progressCallback == 'function') {
+    if (progressCallback && typeof progressCallback === 'function') {
       XMLHTTP.upload.addEventListener('progress', function (e) {
-        var percentage = parseInt(e.loaded / e.total * 100);
+        let percentage = parseInt(e.loaded / e.total * 100);
 
         progressCallback(percentage);
       }, false);
-    };
+    }
 
     XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     XMLHTTP.onreadystatechange = function () {
@@ -94,29 +117,20 @@ module.exports = function () {
        * 3    LOADING             Downloading; responseText holds partial data.
        * 4    DONE                The operation is complete.
        */
-      if (XMLHTTP.readyState == 4) {
-        if (XMLHTTP.status == 200) {
+      if (XMLHTTP.readyState === 4) {
+        if (XMLHTTP.status === 200) {
           successFunction(XMLHTTP.responseText);
         } else {
           errorFunction(XMLHTTP.responseText);
         }
 
-        if (afterFunction && typeof afterFunction == 'function') {
+        if (afterFunction && typeof afterFunction === 'function') {
           afterFunction();
         }
       }
     };
 
     XMLHTTP.send(data.data);
-  };
-
-  /**
-   * Function for checking is it FormData object to send.
-   * @param {Object} object to check
-   * @return boolean
-   */
-  function isFormData(object) {
-    return typeof object.append === 'function';
   };
 
   return {
