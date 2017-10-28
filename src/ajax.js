@@ -35,7 +35,7 @@ module.exports = function () {
    * @return boolean
    */
   let isFormData = function (object) {
-    return typeof object.append === 'function';
+    return object instanceof FormData;
   };
 
   /**
@@ -85,7 +85,7 @@ module.exports = function () {
      * If data is not FormData then create FormData
      */
     if (!isFormData(data.data)) {
-      let requestData = new window.FormData();
+      let requestData = new FormData();
 
       for (let key in data.data) {
         requestData.append(key, data.data[key]);

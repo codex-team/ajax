@@ -78,6 +78,7 @@
         "require": true,
         "window": true,
         "console": true,
-        "define": true
+        "define": true,
+        "FormData": true
     }
 }
