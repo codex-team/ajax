@@ -1,30 +1,6 @@
 /**
  * AJAX module
- *
- * @example
-ajax.call({
-    type: 'POST',
-    url: '/target/url',
-    data: {},
-    before: function () {},
-    progress: function (percentage) {
-        console.log(percentage + '%');
-        // ...
-    },
-    success: function (response) {
-        response = JSON.parse(response);
-        console.log(response);
-        // ...
-    },
-    error: function (response) {
-        response = JSON.parse(response);
-        console.log(response);
-        // ...
-    },
-    after: function () {},
-});
  */
-
 module.exports = function () {
   'use strict';
 
@@ -42,14 +18,14 @@ module.exports = function () {
    * Call AJAX request function
    *
    * @param {Object} data
-   * @param {String} data.type        'GET' or 'POST' request type
-   * @param {String} data.url         request url
-   * @param {String} data.data        data to send
-   * @param {Function} data.before    call this function before request
-   * @param {Function} data.progress  callback function for progress
-   * @param {Function} data.success   success function
-   * @param {Function} data.error     error function
-   * @param {Function} data.atfer     call this function after request
+   * @param {String} data.type          'GET' or 'POST' request type
+   * @param {String} data.url           request url
+   * @param {String} data.data          data to send
+   * @param {Function} data.before      call this function before request
+   * @param {Function} data.progress    callback function for progress
+   * @param {Function} data.success     success function
+   * @param {Function} data.error       error function
+   * @param {Function} data.atfer       call this function after request
    */
   let call = function call(data) {
     if (!data || !data.url) return;
@@ -118,10 +94,18 @@ module.exports = function () {
        * 4    DONE                The operation is complete.
        */
       if (XMLHTTP.readyState === 4) {
+        let responseText = XMLHTTP.responseText;
+
+        try {
+          responseText = JSON.parse(responseText);
+        } catch (e) {
+          // Oh well, but whatever...
+        }
+
         if (XMLHTTP.status === 200) {
-          successFunction(XMLHTTP.responseText);
+          successFunction(responseText);
         } else {
-          errorFunction(XMLHTTP.responseText);
+          errorFunction(responseText);
         }
 
         if (afterFunction && typeof afterFunction === 'function') {
