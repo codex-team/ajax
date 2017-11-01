@@ -64,9 +64,9 @@ var useModule = {
 var plugins = [
 
   /** Minify JS and CSS */
-  // new webpack.optimize.UglifyJsPlugin({
-  //   sourceMap: true
-  // }),
+  new webpack.optimize.UglifyJsPlugin({
+    sourceMap: true
+  }),
 
   /** Block biuld if errors found */
   new webpack.NoEmitOnErrorsPlugin(),
