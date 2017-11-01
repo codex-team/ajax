@@ -1,9 +1,9 @@
 {
   "name": "codex.ajax",
   "exportModuleName": "ajax",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Native AJAX module",
-  "main": "./lib/bundle.js",
+  "main": "./src/ajax.js",
   "scripts": {
     "build": "webpack"
   },

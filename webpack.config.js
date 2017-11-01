@@ -27,7 +27,7 @@ var entry = './src/ajax.js';
  *                  It will work with CommonJS, AMD and as global variable.
  */
 var output = {
-  filename: pkg.main,
+  filename: './lib/bundle.js',
   library: pkg.exportModuleName,
   libraryTarget: 'umd',
 };
@@ -64,9 +64,9 @@ var useModule = {
 var plugins = [
 
   /** Minify JS and CSS */
-  new webpack.optimize.UglifyJsPlugin({
-    sourceMap: true
-  }),
+  // new webpack.optimize.UglifyJsPlugin({
+  //   sourceMap: true
+  // }),
 
   /** Block biuld if errors found */
   new webpack.NoEmitOnErrorsPlugin(),
