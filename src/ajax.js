@@ -35,7 +35,7 @@ module.exports = function () {
         successFunction = data.success || function () {},
         errorFunction = data.error || function () {},
         beforeFunction = data.before || null,
-        afterFunction = data.after ? data.after.bind(null, data) : null;
+        afterFunction = data.after ? data.after.bind(null, data.data) : null;
 
 
     data.async = true;
@@ -52,7 +52,7 @@ module.exports = function () {
     }
 
     if (beforeFunction && typeof beforeFunction === 'function') {
-      let result = beforeFunction(data);
+      let result = beforeFunction(data.data);
 
       if (result === false) {
         return;
