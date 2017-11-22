@@ -35,7 +35,7 @@ module.exports = function () {
         successFunction = data.success || function () {},
         errorFunction = data.error || function () {},
         beforeFunction = data.before || null,
-        afterFunction = data.after || null;
+        afterFunction = data.after ? data.after.bind(null, data) : null;
 
 
     data.async = true;
@@ -52,7 +52,11 @@ module.exports = function () {
     }
 
     if (beforeFunction && typeof beforeFunction === 'function') {
-      beforeFunction();
+      let result = beforeFunction(data);
+
+      if (result === false) {
+        return;
+      }
     }
 
     XMLHTTP.open(data.type, data.url, data.async);
