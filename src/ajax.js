@@ -52,7 +52,11 @@ module.exports = function () {
     }
 
     if (beforeFunction && typeof beforeFunction === 'function') {
-      beforeFunction();
+      let result = beforeFunction(data);
+
+      if (result === false) {
+        return;
+      }
     }
 
     XMLHTTP.open(data.type, data.url, data.async);
