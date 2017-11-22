@@ -35,7 +35,7 @@ module.exports = function () {
         successFunction = data.success || function () {},
         errorFunction = data.error || function () {},
         beforeFunction = data.before || null,
-        afterFunction = data.after || null;
+        afterFunction = data.after.bind(null, data) || null;
 
 
     data.async = true;
