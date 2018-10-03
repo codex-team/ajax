@@ -27,7 +27,7 @@ var entry = './src/ajax.js';
  *                  It will work with CommonJS, AMD and as global variable.
  */
 var output = {
-  filename: './lib/bundle.js',
+  filename: './dist/bundle.js',
   library: pkg.exportModuleName,
   libraryTarget: 'umd',
 };
@@ -41,12 +41,12 @@ var useModule = {
     {
       test : /\.js$/,
       use: [
-        {
-          loader: 'eslint-loader',
-          options: {
-            fix: true
-          }
-        },
+        // {
+        //   loader: 'eslint-loader',
+        //   options: {
+        //     fix: true
+        //   }
+        // },
         {
           loader: 'babel-loader',
           query: {
@@ -81,7 +81,7 @@ var config = {
   module: useModule,
   plugins: plugins,
   watch: true,
-  devtool: 'source-map'
+  // devtool: 'source-map'
 };
 
 module.exports = config;

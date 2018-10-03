@@ -1,127 +1,252 @@
+'use strict';
+
+const utils = require('./utils');
+
+/**
+ * @typedef {object} requestParams
+ * @property {string} url
+ * @property {string} [type]
+ * @property {string|null} [method]
+ * @property {object|FormData|null} [data]
+ * @property {object} [headers]
+ * @property {function|null} [progress]
+ */
+
 /**
  * AJAX module
  */
-module.exports = function () {
-  'use strict';
-
+module.exports = (() => {
   /**
-   * Function for checking is it FormData object to send.
-   *
-   * @param {Object} object to check
-   * @return boolean
+   * @type {{urlencoded: string, form: string, json: string}}
    */
-  let isFormData = function (object) {
-    return object instanceof FormData;
+  const contentType = {
+    urlencoded: 'application/x-www-form-urlencoded',
+    form: 'multipart/form-data',
+    json: 'application/json'
   };
 
   /**
-   * Call AJAX request function
+   * @public
+   * Main request function with all configurable params
    *
-   * @param {Object} data
-   * @param {String} data.type          'GET' or 'POST' request type
-   * @param {String} data.url           request url
-   * @param {String} data.data          data to send
-   * @param {Function} data.before      call this function before request
-   * @param {Function} data.progress    callback function for progress
-   * @param {Function} data.success     success function
-   * @param {Function} data.error       error function
-   * @param {Function} data.atfer       call this function after request
+   * @param {requestParams} params
+   * @return {Promise<object|string>}
    */
-  let call = function call(data) {
-    if (!data || !data.url) return;
+  const request = (params) => {
+    return new Promise((resolve, reject) => {
+      // /**
+      //  * Validate request params
+      //  */
+      // params = validate(params);
 
-    let XMLHTTP = window.XMLHttpRequest ? new window.XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP'),
-        progressCallback = data.progress || null,
-        successFunction = data.success || function () {},
-        errorFunction = data.error || function () {},
-        beforeFunction = data.before || null,
-        afterFunction = data.after ? data.after.bind(null, data.data) : null;
-
-
-    data.async = true;
-    data.type = data.type || 'GET';
-    data.data = data.data || '';
-    data['content-type'] = data['content-type'] || 'application/json; charset=utf-8';
-
-    if (data.type === 'GET' && data.data) {
-      data.url = /\?/.test(data.url) ? data.url + '&' + data.data : data.url + '?' + data.data;
-    }
-
-    if (data.withCredentials) {
-      XMLHTTP.withCredentials = true;
-    }
-
-    if (beforeFunction && typeof beforeFunction === 'function') {
-      let result = beforeFunction(data.data);
-
-      if (result === false) {
-        return;
-      }
-    }
-
-    XMLHTTP.open(data.type, data.url, data.async);
-
-    /**
-     * If data is not FormData then create FormData
-     */
-    if (!isFormData(data.data)) {
-      let requestData = new FormData();
-
-      for (let key in data.data) {
-        requestData.append(key, data.data[key]);
-      }
-
-      data.data = requestData;
-    }
-
-    /**
-     * Add progress listener
-     */
-    if (progressCallback && typeof progressCallback === 'function') {
-      XMLHTTP.upload.addEventListener('progress', function (e) {
-        let percentage = parseInt(e.loaded / e.total * 100);
-
-        progressCallback(percentage);
-      }, false);
-    }
-
-    XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    XMLHTTP.onreadystatechange = function () {
       /**
-       * XMLHTTP.readyState
-       * https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
+       * Create a new request object
        *
-       * 0    UNSENT              Client has been created. open() not called yet.
-       * 1    OPENED              open() has been called.
-       * 2    HEADERS_RECEIVED    send() has been called, and headers and status are available.
-       * 3    LOADING             Downloading; responseText holds partial data.
-       * 4    DONE                The operation is complete.
+       * @type {XMLHttpRequest}
        */
-      if (XMLHTTP.readyState === 4) {
-        let responseText = XMLHTTP.responseText;
+      let XMLHTTP = window.XMLHttpRequest ? new window.XMLHttpRequest () : new window.ActiveXObject('Microsoft.XMLHTTP');
 
-        try {
-          responseText = JSON.parse(responseText);
-        } catch (e) {
-          // Oh well, but whatever...
-        }
+      /**
+       * Prepare ajax request
+       */
+      XMLHTTP.open(params.method, params.url);
 
-        if (XMLHTTP.status === 200) {
-          successFunction(responseText);
-        } else {
-          errorFunction(responseText);
-        }
+      /**
+       * Add default X-Requested-With header to identify ajax-request on the backend-side
+       */
+      XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-        if (afterFunction && typeof afterFunction === 'function') {
-          afterFunction();
-        }
+      /**
+       * Add custom headers
+       */
+      for (let headerName in params.headers) {
+        const headerValue = params.headers[headerName];
+
+        XMLHTTP.setRequestHeader(headerName, headerValue);
       }
-    };
 
-    XMLHTTP.send(data.data);
+      /**
+       * Add progress listener
+       */
+      XMLHTTP.upload.addEventListener('progress', event => {
+        const percentage = parseInt(event.loaded / event.total * 100);
+
+        // console.log('uploaded percentage', percentage);
+
+        params.progress(percentage, event.loaded, event.total);
+      }, false);
+
+      // /** Download progress */
+      // XMLHTTP.addEventListener('progress', event => {
+      //   const percentage = parseInt(event.loaded / event.total * 100);
+      //
+      //   console.log('downloaded percentage', percentage);
+      //
+      //   params.progress(percentage, event.loaded, event.total);
+      // }, false);
+
+      /**
+       * Change state listener
+       */
+      XMLHTTP.onreadystatechange = () => {
+        /**
+         * XMLHTTP.readyState
+         * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/readyState
+         *
+         * 0    UNSENT              Client has been created. open() not called yet.
+         * 1    OPENED              open() has been called.
+         * 2    HEADERS_RECEIVED    send() has been called, and headers and status are available.
+         * 3    LOADING             Downloading; responseText holds partial params.
+         * 4    DONE                The operation is complete.
+         */
+        if (XMLHTTP.readyState === 4) {
+          /**
+           * Get a response string
+           *
+           * @type {string}
+           */
+          let response = XMLHTTP.response;
+
+          /**
+           * Try to parse response as a JSON
+           */
+          try {
+            response = JSON.parse(response);
+          } catch (e) {}
+
+          /**
+           * Check for a response code
+           */
+          if (XMLHTTP.status === 200) {
+            resolve(response);
+          } else {
+            reject(response);
+          }
+        }
+      };
+
+      /**
+       * Send a request
+       */
+      XMLHTTP.send(params.data);
+    });
+  };
+
+  /**
+   * Send a POST request
+   *
+   * Specify header 'Content-Type' to send data correclty
+   * - `application/x-www-form-urlencoded` (default) - to send url-encoded data
+   * - `application/json` to send JSON encoded data
+   * - `multipart/form-data` to send a FormData object
+   *
+   * @param {requestParams} params
+   */
+  const post = (params) => {
+    params = validate(params);
+
+    /**
+     * Get type of data to be converted
+     * @type {string}
+     */
+    const dataType = getContentType(params);
+
+    /**
+     *
+     * @type {string|FormData|any}
+     */
+    const covertedData = convertData(params.data, dataType);
+
+    console.log('covertedData', covertedData);
+
+    params.headers['content-type'] = dataType;
+
+    return request({
+      url: params.url,
+      method: 'POST',
+      data: covertedData,
+      headers: params.headers,
+    });
+  };
+
+  /**
+   * @private
+   * Check params for validness and set default params if they are missing
+   *
+   * @param {requestParams} params
+   */
+  const validate = (params) => {
+    if (!params.url || typeof params.url !== 'string') {
+      throw new Error('Url is missing');
+    }
+
+    params.method = params.method || 'GET';
+
+    params.headers = params.headers || {};
+
+
+
+    // params.data = isFormData(params.data) ? JSON.stringify(params.data) : null;
+
+    // if (params.data) {
+    //   if (!utils.isFormData(params.data)) {
+    //     let requestData = new FormData();
+    //
+    //     for (let key in params.data) {
+    //       requestData.append(key, params.data[key]);
+    //     }
+    //
+    //     params.data = requestData;
+    //   }
+    // }
+
+    if (params.progress && typeof params.progress !== 'function') {
+      throw new Error('`progress` must be a function or null');
+    }
+
+    params.progress = params.progress || (() => {});
+
+    return params;
+  };
+
+
+  /**
+   * @private
+   * Get type from request params
+   *
+   * @param {requestParams} params
+   * @return {string}
+   */
+  const getContentType = (params = {}) => {
+    return params.type || contentType.urlencoded;
+  };
+
+  /**
+   * @private
+   * Convert data according passed content-type
+   *
+   * @param {object|FormData|HTMLElement} data
+   * @param {string} type - content type value {@see contentType}
+   * @return {string|FormData|any}
+   */
+  const convertData = (data = {}, type) => {
+    switch (type) {
+      case contentType.urlencoded:
+        return utils.urlEncode(data);
+      case contentType.json:
+        return utils.jsonEncode(data);
+      case contentType.form:
+        return utils.formEncode(data);
+      default:
+        return data;
+    }
   };
 
   return {
-    call: call
+    post,
+    request,
+    contentType,
   };
-}();
+})();
+
+

@@ -1,29 +1,9 @@
-# codex.ajax
+GET request
+- `data` in url
 
-Native AJAX module
+POST request
+- url-encoded string - `application/x-www-form-urlencoded` header (default)
+- `formData` - `multipart/form-data` header
+- `json` - `application/json` header
 
-## Usage
 
-```js
-ajax.call({
-   type: 'POST',
-   url: '/target/url',
-   data: {},
-   before: function () {},
-   progress: function (percentage) {
-       console.log(percentage + '%');
-       // ...
-   },
-   success: function (response) {
-       response = JSON.parse(response);
-       console.log(response);
-       // ...
-   },
-   error: function (response) {
-       response = JSON.parse(response);
-       console.log(response);
-       // ...
-   },
-   after: function () {},
-});
-```
