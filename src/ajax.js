@@ -34,10 +34,10 @@ module.exports = (() => {
    */
   const request = (params) => {
     return new Promise((resolve, reject) => {
-      // /**
-      //  * Validate request params
-      //  */
-      // params = validate(params);
+      /**
+       * Validate request params
+       */
+      params = validate(params);
 
       /**
        * Create a new request object
@@ -133,14 +133,11 @@ module.exports = (() => {
   };
 
   /**
+   * @public
    * Send a POST request
    *
-   * Specify header 'Content-Type' to send data correclty
-   * - `application/x-www-form-urlencoded` (default) - to send url-encoded data
-   * - `application/json` to send JSON encoded data
-   * - `multipart/form-data` to send a FormData object
-   *
    * @param {requestParams} params
+   * @return {Promise<Object|string>}
    */
   const post = (params) => {
     params = validate(params);
@@ -152,14 +149,17 @@ module.exports = (() => {
     const dataType = getContentType(params);
 
     /**
-     *
      * @type {string|FormData|any}
      */
     const covertedData = convertData(params.data, dataType);
 
-    console.log('covertedData', covertedData);
-
-    params.headers['content-type'] = dataType;
+    /**
+     * We no need to add custom this header for FormData
+     * It will be generated automatically
+     */
+    if (dataType !== ajax.contentType.form) {
+      params.headers['content-type'] = dataType;
+    }
 
     return request({
       url: params.url,
@@ -173,6 +173,8 @@ module.exports = (() => {
    * @private
    * Check params for validness and set default params if they are missing
    *
+   * @todo this function
+   *
    * @param {requestParams} params
    */
   const validate = (params) => {
@@ -185,21 +187,6 @@ module.exports = (() => {
     params.headers = params.headers || {};
 
 
-
-    // params.data = isFormData(params.data) ? JSON.stringify(params.data) : null;
-
-    // if (params.data) {
-    //   if (!utils.isFormData(params.data)) {
-    //     let requestData = new FormData();
-    //
-    //     for (let key in params.data) {
-    //       requestData.append(key, params.data[key]);
-    //     }
-    //
-    //     params.data = requestData;
-    //   }
-    // }
-
     if (params.progress && typeof params.progress !== 'function') {
       throw new Error('`progress` must be a function or null');
     }
@@ -208,7 +195,6 @@ module.exports = (() => {
 
     return params;
   };
-
 
   /**
    * @private
@@ -243,9 +229,14 @@ module.exports = (() => {
   };
 
   return {
-    post,
-    request,
+    /** Provide available content types for POST requests*/
     contentType,
+
+    /** Main ajax function */
+    request,
+
+    /** Simplified POST request function */
+    post
   };
 })();
 

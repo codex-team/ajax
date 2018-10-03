@@ -66,9 +66,6 @@ module.exports = class Utils {
         requestData.append(key, value);
       }
 
-      console.log('data', data);
-      console.log('requestData', requestData);
-
       return requestData;
     }
 
