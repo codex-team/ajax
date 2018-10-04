@@ -57,10 +57,14 @@ module.exports = class Utils {
     /**
      * If data is just an object
      */
-    if (data instanceof Object) {
+    if (data instanceof Object && Object.keys(data).length) {
       let requestData = new FormData();
 
       for (let key in data) {
+        if (!data.hasOwnProperty(key)) {
+          continue;
+        }
+
         const value = data[key];
 
         requestData.append(key, value);

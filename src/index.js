@@ -25,12 +25,12 @@ const utils = require('./utils');
  */
 module.exports = (() => {
   /**
-   * @type {{urlencoded: string, form: string, json: string}}
+   * List of available values for 'Content-Type' header for POST requests
    */
   const contentType = {
-    urlencoded: 'application/x-www-form-urlencoded',
-    form: 'multipart/form-data',
-    json: 'application/json; charset=utf-8'
+    URLENCODED: 'application/x-www-form-urlencoded',
+    FORM: 'multipart/form-data',
+    JSON: 'application/json; charset=utf-8'
   };
 
   /**
@@ -87,7 +87,7 @@ module.exports = (() => {
        *
        * @type {number}
        */
-      const percentageForUploading = params.ratio || 90;
+      const percentageForUploading = params.ratio;
 
       /**
        * Add progress listener
@@ -183,7 +183,7 @@ module.exports = (() => {
     /**
      * @type {string}
      */
-    const covertedData = convertData(params.data, contentType.urlencoded);
+    const covertedData = convertData(params.data, contentType.URLENCODED);
 
     /**
      * Add converted data to url
@@ -229,7 +229,7 @@ module.exports = (() => {
      * We no need to add custom this header for FormData
      * It will be generated automatically
      */
-    if (dataType !== ajax.contentType.form) {
+    if (dataType !== ajax.contentType.FORM) {
       params.headers['content-type'] = dataType;
     }
 
@@ -395,7 +395,7 @@ module.exports = (() => {
    * @return {string}
    */
   const getContentType = (params = {}) => {
-    return params.type || contentType.urlencoded;
+    return params.type || contentType.URLENCODED;
   };
 
   /**
@@ -408,11 +408,11 @@ module.exports = (() => {
    */
   const convertData = (data = {}, type) => {
     switch (type) {
-      case contentType.urlencoded:
+      case contentType.URLENCODED:
         return utils.urlEncode(data);
-      case contentType.json:
+      case contentType.JSON:
         return utils.jsonEncode(data);
-      case contentType.form:
+      case contentType.FORM:
         return utils.formEncode(data);
       default:
         return data;
