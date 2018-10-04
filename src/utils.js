@@ -84,4 +84,74 @@ module.exports = class Utils {
   static isFormData(obj) {
     return obj instanceof FormData;
   };
+
+  /**
+   * @typedef {object} transportParams
+   * @property {string} accept
+   * @property {boolean} multiple
+   * @property {string} fieldName
+   */
+
+  /**
+   * Create an ephemeral input file field and return FormData object with files
+   *
+   * @param {transportParams} config
+   * @return {Promise<FormData>}
+   */
+  static transport(config) {
+    return new Promise((resolve, reject) => {
+      /**
+       * Create a new INPUT element
+       * @type {HTMLElement}
+       */
+      let inputElement = document.createElement('INPUT');
+
+      /**
+       * Set a 'FILE' type for this input element
+       * @type {string}
+       */
+      inputElement.type = 'file';
+
+      if (config.multiple) {
+        inputElement.setAttribute('multiple', 'multiple');
+      }
+
+      if (config.accept) {
+        inputElement.setAttribute('accept', config.accept);
+      }
+
+      /**
+       * Add onchange listener for «choose file» pop-up
+       */
+      inputElement.addEventListener('change', (event) => {
+        /**
+         * Get files from input field
+         */
+        const files = event.target.files;
+
+        /**
+         * Create a FormData object
+         * @type {FormData}
+         */
+        let formData = new FormData();
+
+        /**
+         * Append files to FormData
+         */
+        for (let i = 0; i < files.length; i++) {
+          formData.append(config.fieldName, files[i], files[i].name);
+        }
+
+        /**
+         * Return ready to be uploaded FormData object
+         */
+        resolve(formData);
+      }, false);
+
+      /**
+       * Fire click event on «input file» field
+       */
+      inputElement.click();
+    });
+  };
 };

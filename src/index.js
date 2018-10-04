@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * Helpers functions
+ * @type {module.Utils}
+ */
 const utils = require('./utils');
 
 /**
@@ -10,6 +14,10 @@ const utils = require('./utils');
  * @property {object|FormData|null} [data]
  * @property {object} [headers]
  * @property {function|null} [progress]
+ * @property {number} [ratio=90]
+ * @property {string} [accept=null]
+ * @property {boolean} [multiple=false]
+ * @property {string} [fieldName='files']
  */
 
 /**
@@ -22,7 +30,7 @@ module.exports = (() => {
   const contentType = {
     urlencoded: 'application/x-www-form-urlencoded',
     form: 'multipart/form-data',
-    json: 'application/json'
+    json: 'application/json; charset=utf-8'
   };
 
   /**
@@ -35,7 +43,8 @@ module.exports = (() => {
   const request = (params) => {
     return new Promise((resolve, reject) => {
       /**
-       * Validate request params
+       * Check passed params object
+       * @type {requestParams}
        */
       params = validate(params);
 
@@ -66,27 +75,48 @@ module.exports = (() => {
       }
 
       /**
+       * A max number of percentages to be used to uploading
+       * The rest — for response downloading
+       *
+       * @example percentageForUploading = 80
+       * Progress bar will be filled for 80% when all data has been sent
+       * For server response we have 20% of bar
+       *
+       * [############ 80% ############    20%   ]
+       *             upload             download
+       *
+       * @type {number}
+       */
+      const percentageForUploading = params.ratio || 90;
+
+      /**
        * Add progress listener
        */
       XMLHTTP.upload.addEventListener('progress', event => {
-        const percentage = parseInt(event.loaded / event.total * 100);
+        const percentage = Math.round(event.loaded / event.total * 100);
 
-        // console.log('uploaded percentage', percentage);
+        /**
+         * Recalculate percentage according progress bar ratio
+         * @type {number}
+         */
+        const recountedPercentage = Math.ceil(percentage * percentageForUploading / 100);
 
-        console.log(percentage, event.loaded, event.total);
-
-        // params.progress(percentage, event.loaded, event.total);
+        params.progress(recountedPercentage);
       }, false);
 
-      /** Download progress */
+      /**
+       * Download progress
+       */
       XMLHTTP.addEventListener('progress', event => {
-        const percentage = parseInt(event.loaded / event.total * 100);
+        const percentage = Math.round(event.loaded / event.total * 100);
 
-        // console.log('downloaded percentage', percentage);
+        /**
+         * Recalculate percentage according progress bar ratio
+         * @type {number}
+         */
+        const recountedPercentage = Math.ceil(percentage * (100 - percentageForUploading) / 100) + percentageForUploading;
 
-        console.log(percentage, event.loaded, event.total);
-
-        // params.progress(percentage, event.loaded, event.total);
+        params.progress(recountedPercentage);
       }, false);
 
       /**
@@ -144,6 +174,10 @@ module.exports = (() => {
    * @return {Promise<Object|string>}
    */
   const get = (params) => {
+    /**
+     * Check passed params object
+     * @type {requestParams}
+     */
     params = validate(params);
 
     /**
@@ -161,6 +195,8 @@ module.exports = (() => {
       url: params.url,
       method: 'GET',
       headers: params.headers,
+      progress: params.progress,
+      ratio: params.ratio
     });
   };
 
@@ -172,6 +208,10 @@ module.exports = (() => {
    * @return {Promise<Object|string>}
    */
   const post = (params) => {
+    /**
+     * Check passed params object
+     * @type {requestParams}
+     */
     params = validate(params);
 
     /**
@@ -198,33 +238,152 @@ module.exports = (() => {
       method: 'POST',
       data: covertedData,
       headers: params.headers,
+      progress: params.progress,
+      ratio: params.ratio
     });
+  };
+
+  /**
+   * @public
+   * Upload user-chosen files via POST request
+   *
+   * @param {requestParams} params
+   * @return {Promise<object|string>}
+   */
+  const transport = (params) => {
+    /**
+     * Check passed params object
+     * @type {requestParams}
+     */
+    params = validate(params);
+
+    return utils.transport(params)
+      .then(formData => {
+        /**
+         * Append additional data
+         */
+        if (params.data) {
+          for (let key in params.data) {
+            const value = params.data[key];
+
+            formData.append(key, value);
+          }
+        }
+
+        /**
+         * Send POST request
+         */
+        return post({
+          url: '/',
+          type: contentType.form,
+          data: formData,
+          headers: params.headers,
+          progress: params.progress,
+          ratio: params.ratio
+        });
+      })
   };
 
   /**
    * @private
    * Check params for validness and set default params if they are missing
    *
-   * @todo this function
-   *
    * @param {requestParams} params
+   * @return {requestParams}
    */
   const validate = (params) => {
     if (!params.url || typeof params.url !== 'string') {
-      throw new Error('Url is missing');
+      throw new Error('Url must be a non-empty string');
+    }
+
+    /**
+     * Check 'method'
+     * @type {string|string}
+     */
+    if (params.method && typeof params.method !== 'string') {
+      throw new Error('`method` must be a string or null');
     }
 
     params.method = params.method || 'GET';
 
+    /**
+     * Check 'headers'
+     */
+    if (params.headers && typeof params.headers !== 'object') {
+      throw new Error('`headers` must be an object or null');
+    }
+
     params.headers = params.headers || {};
 
+    /**
+     * Check 'type'
+     */
+    if (params.type && typeof params.type !== 'string') {
+      let wasFound = false;
 
+      for (const type in contentType) {
+        if (contentType[type] === params.type) {
+          wasFound = true;
+        }
+      }
+
+      if (!wasFound) {
+        throw new Error('`type` must be taken from module\'s «contentType» library');
+      }
+    }
+
+    /**
+     * Check 'progress'
+     */
     if (params.progress && typeof params.progress !== 'function') {
       throw new Error('`progress` must be a function or null');
     }
 
     params.progress = params.progress || (() => {});
 
+    /**
+     * Check 'ratio'
+     */
+    if (params.ratio && typeof params.ratio !== 'number') {
+      throw new Error('`ratio` must be a number');
+    }
+
+    if (params.ratio < 0 || params.ratio > 100) {
+      throw new Error('`ratio` must be in a 0-100 interval');
+    }
+
+    params.ratio = params.ratio || 90;
+
+    /**
+     * Check 'accept'
+     */
+    if (params.accept && typeof params.accept !== 'string') {
+      throw new Error('`accept` must be a string with a list of allowed mime-types');
+    }
+
+    params.accept = params.accept || '*/*';
+
+    /**
+     * Check 'multiple'
+     */
+    if (params.multiple && typeof params.multiple !== 'boolean') {
+      throw new Error('`multiple` must be a true or false');
+    }
+
+    params.multiple = params.multiple || false;
+
+    /**
+     * Check 'fieldName'
+     */
+    if (params.fieldName && typeof params.fieldName !== 'string') {
+      throw new Error('`fieldName` must be a string');
+    }
+
+    params.fieldName = params.fieldName || 'files';
+
+    /**
+     * Return validated params
+     */
     return params;
   };
 
@@ -261,7 +420,7 @@ module.exports = (() => {
   };
 
   return {
-    /** Provide available content types for POST requests*/
+    /** Provide available content types for POST requests */
     contentType,
 
     /** Main ajax function */
@@ -270,7 +429,10 @@ module.exports = (() => {
     /** GET request */
     get,
     /** POST request */
-    post
+    post,
+
+    /** Upload user-chosen files via POST request */
+    transport
   };
 })();
 
