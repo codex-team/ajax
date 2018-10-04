@@ -73,17 +73,21 @@ module.exports = (() => {
 
         // console.log('uploaded percentage', percentage);
 
-        params.progress(percentage, event.loaded, event.total);
+        console.log(percentage, event.loaded, event.total);
+
+        // params.progress(percentage, event.loaded, event.total);
       }, false);
 
-      // /** Download progress */
-      // XMLHTTP.addEventListener('progress', event => {
-      //   const percentage = parseInt(event.loaded / event.total * 100);
-      //
-      //   console.log('downloaded percentage', percentage);
-      //
-      //   params.progress(percentage, event.loaded, event.total);
-      // }, false);
+      /** Download progress */
+      XMLHTTP.addEventListener('progress', event => {
+        const percentage = parseInt(event.loaded / event.total * 100);
+
+        // console.log('downloaded percentage', percentage);
+
+        console.log(percentage, event.loaded, event.total);
+
+        // params.progress(percentage, event.loaded, event.total);
+      }, false);
 
       /**
        * Change state listener
@@ -129,6 +133,34 @@ module.exports = (() => {
        * Send a request
        */
       XMLHTTP.send(params.data);
+    });
+  };
+
+  /**
+   * @public
+   * Send a GET request
+   *
+   * @param {requestParams} params
+   * @return {Promise<Object|string>}
+   */
+  const get = (params) => {
+    params = validate(params);
+
+    /**
+     * @type {string}
+     */
+    const covertedData = convertData(params.data, contentType.urlencoded);
+
+    /**
+     * Add converted data to url
+     * @type {string}
+     */
+    params.url = /\?/.test(params.url) ? params.url + '&' + covertedData : params.url + '?' + covertedData;
+
+    return request({
+      url: params.url,
+      method: 'GET',
+      headers: params.headers,
     });
   };
 
@@ -235,7 +267,9 @@ module.exports = (() => {
     /** Main ajax function */
     request,
 
-    /** Simplified POST request function */
+    /** GET request */
+    get,
+    /** POST request */
     post
   };
 })();
