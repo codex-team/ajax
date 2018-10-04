@@ -275,7 +275,7 @@ module.exports = (() => {
          */
         return post({
           url: '/',
-          type: contentType.form,
+          type: contentType.FORM,
           data: formData,
           headers: params.headers,
           progress: params.progress,
