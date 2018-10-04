@@ -11,7 +11,7 @@ const utils = require('./utils');
  * @property {string} url
  * @property {string} [type]
  * @property {string|null} [method]
- * @property {object|FormData|null} [data]
+ * @property {object|FormData|string|null} [data]
  * @property {object} [headers]
  * @property {function|null} [progress]
  * @property {number} [ratio=90]
@@ -40,7 +40,7 @@ module.exports = (() => {
    * @param {requestParams} params
    * @return {Promise<object|string>}
    */
-  const request = (params) => {
+  const request = function request(params) {
     return new Promise((resolve, reject) => {
       /**
        * Check passed params object
@@ -68,11 +68,11 @@ module.exports = (() => {
       /**
        * Add custom headers
        */
-      for (let headerName in params.headers) {
+      Object.keys(params.headers).forEach(headerName => {
         const headerValue = params.headers[headerName];
 
         XMLHTTP.setRequestHeader(headerName, headerValue);
-      }
+      });
 
       /**
        * A max number of percentages to be used to uploading
@@ -173,7 +173,7 @@ module.exports = (() => {
    * @param {requestParams} params
    * @return {Promise<Object|string>}
    */
-  const get = (params) => {
+  const get = function get(params) {
     /**
      * Check passed params object
      * @type {requestParams}
@@ -207,7 +207,7 @@ module.exports = (() => {
    * @param {requestParams} params
    * @return {Promise<Object|string>}
    */
-  const post = (params) => {
+  const post = function post(params) {
     /**
      * Check passed params object
      * @type {requestParams}
@@ -250,7 +250,7 @@ module.exports = (() => {
    * @param {requestParams} params
    * @return {Promise<object|string>}
    */
-  const transport = (params) => {
+  const transport = function transport(params) {
     /**
      * Check passed params object
      * @type {requestParams}
@@ -274,7 +274,7 @@ module.exports = (() => {
          * Send POST request
          */
         return post({
-          url: '/',
+          url: params.url,
           type: contentType.FORM,
           data: formData,
           headers: params.headers,
@@ -291,7 +291,7 @@ module.exports = (() => {
    * @param {requestParams} params
    * @return {requestParams}
    */
-  const validate = (params) => {
+  const validate = function validate(params) {
     if (!params.url || typeof params.url !== 'string') {
       throw new Error('Url must be a non-empty string');
     }
@@ -318,18 +318,8 @@ module.exports = (() => {
     /**
      * Check 'type'
      */
-    if (params.type && typeof params.type !== 'string') {
-      let wasFound = false;
-
-      for (const type in contentType) {
-        if (contentType[type] === params.type) {
-          wasFound = true;
-        }
-      }
-
-      if (!wasFound) {
-        throw new Error('`type` must be taken from module\'s «contentType» library');
-      }
+    if (params.type && (typeof params.type !== 'string' || !Object.values(contentType).includes(params.type))) {
+      throw new Error('`type` must be taken from module\'s «contentType» library');
     }
 
     /**
@@ -339,7 +329,7 @@ module.exports = (() => {
       throw new Error('`progress` must be a function or null');
     }
 
-    params.progress = params.progress || (() => {});
+    params.progress = params.progress || ((percentage) => {});
 
     /**
      * Check 'ratio'
@@ -394,7 +384,7 @@ module.exports = (() => {
    * @param {requestParams} params
    * @return {string}
    */
-  const getContentType = (params = {}) => {
+  const getContentType = function getContentType(params = {}) {
     return params.type || contentType.URLENCODED;
   };
 
@@ -404,9 +394,9 @@ module.exports = (() => {
    *
    * @param {object|FormData|HTMLElement} data
    * @param {string} type - content type value {@see contentType}
-   * @return {string|FormData|any}
+   * @return {string|FormData|*}
    */
-  const convertData = (data = {}, type) => {
+  const convertData = function convertData(data = {}, type) {
     switch (type) {
       case contentType.URLENCODED:
         return utils.urlEncode(data);
@@ -435,5 +425,3 @@ module.exports = (() => {
     transport
   };
 })();
-
-

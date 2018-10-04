@@ -1,5 +1,5 @@
 /**
- *
+ * Helpers functions
  */
 module.exports = class Utils {
   /**
@@ -16,7 +16,7 @@ module.exports = class Utils {
       Object.keys(data).forEach(key => {
         const value = data[key];
 
-        dataParts.push(`${key}=${value}`);
+        dataParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
       });
     }
 
@@ -60,15 +60,11 @@ module.exports = class Utils {
     if (data instanceof Object && Object.keys(data).length) {
       let requestData = new FormData();
 
-      for (let key in data) {
-        if (!data.hasOwnProperty(key)) {
-          continue;
-        }
-
+      Object.keys(data).forEach(keys => {
         const value = data[key];
 
         requestData.append(key, value);
-      }
+      });
 
       return requestData;
     }
