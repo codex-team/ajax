@@ -1,4 +1,11 @@
 /**
+ * JS implementation of PHP's http_build_query()
+ * @see https://github.com/vladzadvorny/http-build-query
+ * @type {httpBuildQuery}
+ */
+const httpBuildQuery = require('http-build-query');
+
+/**
  * Helpers functions
  */
 module.exports = class Utils {
@@ -10,17 +17,7 @@ module.exports = class Utils {
    * @return {string}
    */
   static urlEncode(data) {
-    let dataParts = [];
-
-    if (typeof data === 'object') {
-      Object.keys(data).forEach(key => {
-        const value = data[key];
-
-        dataParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-      });
-    }
-
-    return dataParts.join('&');
+    return httpBuildQuery(data);
   }
 
   /**
@@ -60,7 +57,7 @@ module.exports = class Utils {
     if (data instanceof Object && Object.keys(data).length) {
       let requestData = new FormData();
 
-      Object.keys(data).forEach(keys => {
+      Object.keys(data).forEach(key => {
         const value = data[key];
 
         requestData.append(key, value);
@@ -84,6 +81,16 @@ module.exports = class Utils {
   static isFormData(obj) {
     return obj instanceof FormData;
   };
+
+  /**
+   * Check if variable is a «form» HTMLElement
+   *
+   * @param {any} obj
+   * @return {boolean}
+   */
+  static isFormElement(obj) {
+    return obj instanceof HTMLElement && obj.tagName === 'FORM';
+  }
 
   /**
    * @typedef {object} transportParams

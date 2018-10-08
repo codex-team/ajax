@@ -1,5 +1,7 @@
 'use strict';
 
+require('./polyfills');
+
 /**
  * Helpers functions
  * @type {module.Utils}
@@ -11,13 +13,14 @@ const utils = require('./utils');
  * @property {string} url
  * @property {string} [type]
  * @property {string|null} [method]
- * @property {object|FormData|string|null} [data]
+ * @property {object|FormData|null} [data]
  * @property {object} [headers]
  * @property {function|null} [progress]
  * @property {number} [ratio=90]
  * @property {string} [accept=null]
  * @property {boolean} [multiple=false]
  * @property {string} [fieldName='files']
+ * @property {HTMLElement} [form]
  */
 
 /**
@@ -28,7 +31,7 @@ module.exports = (() => {
    * List of available values for 'Content-Type' header for POST requests
    */
   const contentType = {
-    URLENCODED: 'application/x-www-form-urlencoded',
+    URLENCODED: 'application/x-www-form-urlencoded; charset=utf-8',
     FORM: 'multipart/form-data',
     JSON: 'application/json; charset=utf-8'
   };
@@ -181,9 +184,20 @@ module.exports = (() => {
     params = validate(params);
 
     /**
+     * Set up method
+     * @type {string}
+     */
+    params.method = 'GET';
+
+    /**
      * @type {string}
      */
     const covertedData = convertData(params.data, contentType.URLENCODED);
+
+    /**
+     * Remove this field because data will be stored in URL
+     */
+    delete params.data;
 
     /**
      * Add converted data to url
@@ -191,13 +205,7 @@ module.exports = (() => {
      */
     params.url = /\?/.test(params.url) ? params.url + '&' + covertedData : params.url + '?' + covertedData;
 
-    return request({
-      url: params.url,
-      method: 'GET',
-      headers: params.headers,
-      progress: params.progress,
-      ratio: params.ratio
-    });
+    return request(params);
   };
 
   /**
@@ -215,15 +223,29 @@ module.exports = (() => {
     params = validate(params);
 
     /**
+     * Set up method
+     * @type {string}
+     */
+    params.method = 'POST';
+
+    /**
      * Get type of data to be converted
      * @type {string}
      */
-    const dataType = getContentType(params);
+    let dataType = getContentType(params);
 
     /**
-     * @type {string|FormData|any}
+     * If passed data is a form element or form data then change dataType
      */
-    const covertedData = convertData(params.data, dataType);
+    if (utils.isFormData(params.data) || utils.isFormElement(params.data)) {
+      dataType = contentType.FORM;
+    }
+
+    /**
+     * Convert data object according content type
+     * @type {object|FormData}
+     */
+    params.data = convertData(params.data, dataType);
 
     /**
      * We no need to add custom this header for FormData
@@ -233,14 +255,7 @@ module.exports = (() => {
       params.headers['content-type'] = dataType;
     }
 
-    return request({
-      url: params.url,
-      method: 'POST',
-      data: covertedData,
-      headers: params.headers,
-      progress: params.progress,
-      ratio: params.ratio
-    });
+    return request(params);
   };
 
   /**
@@ -263,24 +278,29 @@ module.exports = (() => {
          * Append additional data
          */
         if (params.data) {
-          for (let key in params.data) {
+          Object.keys(params.data).forEach(key => {
             const value = params.data[key];
 
             formData.append(key, value);
-          }
+          });
         }
+
+        /**
+         * Save formData composed object to data field
+         * @type {FormData}
+         */
+        params.data = formData;
+
+        /**
+         * Set content type
+         * @type {string}
+         */
+        params.type = contentType.FORM;
 
         /**
          * Send POST request
          */
-        return post({
-          url: params.url,
-          type: contentType.FORM,
-          data: formData,
-          headers: params.headers,
-          progress: params.progress,
-          ratio: params.ratio
-        });
+        return post(params);
       })
   };
 
@@ -385,7 +405,7 @@ module.exports = (() => {
    * @return {string}
    */
   const getContentType = function getContentType(params = {}) {
-    return params.type || contentType.URLENCODED;
+    return params.type || contentType.JSON;
   };
 
   /**

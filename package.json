@@ -12,7 +12,8 @@
     "url": "git+https://github.com/codex-team/ajax.git"
   },
   "author": {
-    "name": "Taly Guryn"
+    "name": "Taly Guryn",
+    "url": "https://github.com/talyguryn"
   },
   "license": "MIT",
   "bugs": {
@@ -23,6 +24,8 @@
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "babel-loader": "^8.0.4",
+    "http-build-query": "^0.7.0",
+    "promise-polyfill": "^8.1.0",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2"
   }

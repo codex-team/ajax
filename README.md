@@ -1,6 +1,6 @@
 # Ajax
 
-Easy module for async requests on native JavaScript.
+Easy module for async requests in a native JavaScript.
 
 ## Installation
 
@@ -11,7 +11,7 @@ npm i --save-dev @codexteam/ajax
 ```
 
 ```shell
-yarn add @codexteam/ajax
+yarn add -D @codexteam/ajax
 ```
 
 Also you can get module [from CDN](https://unpkg.com/@codexteam/ajax) or download a [bundle file](dist/main.js) and use it locally.
@@ -34,7 +34,7 @@ Main function for all requests.
 | -------- | ----------------- | -------- | -------------------- | ------------------------------------- |
 | url      | `string`          | **true** |                      | Request URL                           |
 | method   | `string`          | false    | `'GET'`              | Request method                        |
-| data     | `string|FormData` | false    | `null`               | Data to be sent                       |
+| data     | `object|FormData` | false    | `null`               | Data to be sent                       |
 | headers  | `object`          | false    | `null`               | Custom headers object                 |
 | progress | `function`        | false    | `(percentage) => {}` | Progress callback                     |
 | ratio    | `number`          | false    | `90`                 | Max % of bar for *uploading* progress |
@@ -107,6 +107,8 @@ You can get value for the param `type` from `ajax.contentType` object. Data will
 
 #### Example
 
+Simple POST request
+
 ```javascript
 const params = {
   url: '/saveArticle',
@@ -117,8 +119,8 @@ const params = {
   },
   
   /** Choose the content type you need */
-  type: ajax.contentType.URLENCODED
-  // type: ajax.contentType.JSON
+  type: ajax.contentType.JSON 
+  // type: ajax.contentType.URLENCODED
   // type: ajax.contentType.FORM
 };
 
@@ -126,6 +128,33 @@ ajax.post(params)
   .then(successCallback)
   .catch(errorCallback);
 ```
+
+#### Example 
+
+To send any form you can pass `form` HTMLElement as a `data` to `ajax.post()`.
+
+```html
+<form id="form-element">
+    <input type="text" name="firstName" placeholder="First name">
+    <input type="text" name="lastName" placeholder="Last name">
+    <input type="file" name="profileImage" accept="image/*">
+    <button onclick="event.preventDefault(); sendForm()">Send form</button>
+</form>
+
+<script>
+function sendForm() {
+  var form = document.getElementById('form-element');
+  
+  ajax.post({
+    url:'/addUser',
+    data: form
+  })
+    .then(successCallback)
+    .catch(errorCallback);
+} 
+</script>
+```
+
 
 ### ajax.transport()
 
@@ -166,4 +195,11 @@ const params = {
 ajax.transport(params)
   .then(successCallback)
   .catch(errorCallback);
+```
+#### Example
+
+One simple button for uploading files.
+
+```html
+<button onclick='ajax.transport({url: "/uploadFile"}).then(successCallback).catch(errorCallback)'>Upload file<button>
 ```
