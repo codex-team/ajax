@@ -84,8 +84,10 @@ const params = {
     isPublished: false
   },
   
-  /** Choose the content type you need */
-  type: ajax.contentType.JSON 
+  /**
+   * Choose the content type you need
+   */
+  // type: ajax.contentType.JSON /* (default) */ 
   // type: ajax.contentType.URLENCODED
   // type: ajax.contentType.FORM
 };
