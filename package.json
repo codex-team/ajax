@@ -1,7 +1,7 @@
 {
   "name": "@codexteam/ajax",
   "exportModuleName": "ajax",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Native AJAX module",
   "main": "./dist/main.js",
   "scripts": {

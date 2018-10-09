@@ -2,6 +2,8 @@
 
 Module for async requests on a native JavaScript.
 
+> Package has been renamed from `codex.ajax` to `@codexteam/ajax`
+
 ## Installation
 
 You can install this package via NPM or Yarn
