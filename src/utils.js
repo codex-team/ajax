@@ -23,7 +23,7 @@ module.exports = class Utils {
   /**
    * Encode data to JSON string
    *
-   * @param {any} data
+   * @param {*} data
    * @return {string}
    */
   static jsonEncode(data) {
@@ -75,7 +75,7 @@ module.exports = class Utils {
   /**
    * Check if variable is an instance of FormData
    *
-   * @param {any} obj
+   * @param {*} obj
    * @return {boolean}
    */
   static isFormData(obj) {
@@ -85,7 +85,7 @@ module.exports = class Utils {
   /**
    * Check if variable is a «form» HTMLElement
    *
-   * @param {any} obj
+   * @param {*} obj
    * @return {boolean}
    */
   static isFormElement(obj) {

@@ -25,7 +25,7 @@ const utils = require('./utils');
 /**
  * AJAX module
  */
-module.exports = (() => {
+const ajax = (() => {
   /**
    * List of available values for 'Content-Type' header for POST requests
    */
@@ -55,7 +55,7 @@ module.exports = (() => {
        *
        * @type {XMLHttpRequest}
        */
-      let XMLHTTP = window.XMLHttpRequest ? new window.XMLHttpRequest () : new window.ActiveXObject('Microsoft.XMLHTTP');
+      let XMLHTTP = window.XMLHttpRequest ? new window.XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
 
       /**
        * Prepare ajax request
@@ -300,7 +300,7 @@ module.exports = (() => {
          * Send POST request
          */
         return post(params);
-      })
+      });
   };
 
   /**
@@ -444,3 +444,5 @@ module.exports = (() => {
     transport
   };
 })();
+
+module.exports = ajax;

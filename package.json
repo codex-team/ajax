@@ -5,7 +5,7 @@
   "description": "Native AJAX module",
   "main": "./dist/main.js",
   "scripts": {
-    "build": "webpack"
+    "build": "NODE_ENV=production webpack"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,8 @@
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "babel-loader": "^8.0.4",
+    "eslint": "^5.6.1",
+    "eslint-config-codex": "github:codex-team/eslint-config",
     "http-build-query": "^0.7.0",
     "promise-polyfill": "^8.1.0",
     "webpack": "^4.20.2",

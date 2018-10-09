@@ -1,17 +1,17 @@
-# Ajax
+# AJAX
 
-Easy module for async requests in a native JavaScript.
+Module for async requests on a native JavaScript.
 
 ## Installation
 
 You can install this package via NPM or Yarn
 
 ```shell
-npm i --save-dev @codexteam/ajax
+npm install @codexteam/ajax
 ```
 
 ```shell
-yarn add -D @codexteam/ajax
+yarn add @codexteam/ajax
 ```
 
 Require package on your script page.
@@ -26,251 +26,10 @@ Also you can get this module [from CDN](https://unpkg.com/@codexteam/ajax) or do
 
 There are a few public functions available to be used by user. All of them return Promise.
 
-- ajax.request()
-- ajax.post()
-- ajax.get()
-- ajax.transport()
-
-### Params
-
-List of params, their types, descriptions and examples.
-
-#### url `string` (required)
-
-Target page URL.
-
-##### Example
-
-`/user/22`, `/getPage`, `/saveArticle`
-
-#### method `string`
-
-> Used in `ajax.request()` function only
-
-Request method.
-
-`GET`, `POST`
-
-Read more about available request methods methods on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at developer.mozilla.org.
-
-#### data `object|FormData|string|HTMLElement`
-
-> For `ajax.request()` use should encode data and add headers by yourself
-
-To avoid any unexpected troubles `ajax.request()` will not encode passed data by itself.
-
-##### Example
-
-```javascript
-const params = {
-  url: '/joinSurvey',
-  method: 'POST',
-  data: JSON.stringify({user: 22}),
-  headers: {
-    'content-type': 'application/json; charset=utf-8'
-  }
-};
-
-ajax.request(params)
-  .then(successCallback)
-  .catch(errorCallback);
-```
-
-```javascript
-const params = {
-  url: '/sendForm',
-  method: 'POST',
-  data: new FormData(document.getElementById('my-form'))
-};
-
-ajax.request(params)
-  .then(successCallback)
-  .catch(errorCallback);
-```
-
-> For `ajax.get()` you can pass `object` data
-
-Data will be encoded automatically.
-
-```javascript
-const params = {
-  url: '/getUserData',
-  data: {
-    user: 22
-  }
-};
-
-ajax.get(params)
-  .then(successCallback)
-  .catch(errorCallback);
-```
-
-is the same as
-
-```javascript
-const params = {
-  url: '/getUserData?user=22'
-};
-
-ajax.get(params)
-  .then(successCallback)
-  .catch(errorCallback);
-```
-
-> For `ajax.post()` you can pass data as `object`, `FormData` or `HTMLElement`
-
-> For `ajax.transport()` should pass `object` data if it is necessary
-
-You can send additional data with files.
-
-```javascript
-const params = {
-  url: '/uploadImage',
-  accept: 'image/*',
-  data: {
-    visible: true,
-    caption: 'Amazing pic'
-  },
-  fieldName: 'image'
-};
-
-ajax.transport(params)
-  .then(successCallback)
-  .catch(errorCallback);
-```
-
-#### type `string`
-
-> Used in `ajax.post()` function only
-
-Specify the content type of data to be encoded (by ajax module) and sent.
-
-You can get value for this param from `ajax.contentType` object. Data will be encoded that way.
-
-| ajax.contentType | value                                              |
-| ---------------- | -------------------------------------------------- |
-| JSON             | `application/json; charset=utf-8`                  |
-| URLENCODED       | `application/x-www-form-urlencoded; charset=utf-8` |
-| FORM             | `multipart/form-data`                              |
-
-
-##### Example
-
-```javascript
-const params = {
-  // ...
-  
-  type: ajax.contentType.JSON 
-  // type: ajax.contentType.URLENCODED
-  // type: ajax.contentType.FORM
-};
-```
-
-#### headers `object`
-
-Object of custom headers which will be added to request.
-
-##### Example
-
-```javascript
-headers = {
-  'authorization': 'Bearer eyJhbGciJ9...TJVA95OrM7h7HgQ',
-  // ...
-}
-```
-
-#### progress `function`
-
-Almost all requests have responses. To show a correct progress for a call we need to combine a request progress (uploading) and a response progress (downloading). This ajax module uses one `progress` callback for it.
-
-##### Example
-
-```javascript
-/**
- * @param {number} percentage - progress value from 0 to 100 
- */
-var progressCallback = function progressCallback(percentage) {  
-    document.title = `${percentage}%`;
-};
-```
-
-Check out `ratio` param to show progress more accurate.
-
-#### ratio `number`
-
-> Used with `progress` param
-
-Value should be in the `0`-`100` interval.
-
-If you know that some requests may take more time than their responses or vice versa, you can set up a `ratio` param and define a boundary between them on the progress bar.
-
-For example if you want to show progress for a file uploading process, you know that uploading will take a much more time than downloading response, then pass bigger ratio (~95). When you want to download big file — use smaller ratio (~5). 
-
-![](./assets/ratio-example.gif)
-
-#### accept `string`
-
-> Used in `ajax.transport()` function only
-
-String of available types of files to be chosen by user.
-
-##### Example
-
-`*/*` — any files (default)
-
-`image/*` — only images 
-
-`image/png, image/jpg, image/bmp` — restrict accepted types 
-
-Read more about MIME-types on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) at developer.mozilla.org.
-
-#### multiple `boolean`
-
-> Used in `ajax.transport()` function only
-
-`false` by default. User can choose only one file.
-
-If you want to allow user choose more than a one file to be uploaded, then pass a `true` value.
-
-#### fieldName `string`
-
-> Used in `ajax.transport()` function only
-
-Name of data field with the file or array of files.
-
-`files` by default. 
-
-### ajax.request()
-
-Main function for all requests.
-
-| param    | type                   | default value        | description                           | 
-| -------- | ---------------------- | -------------------- | ------------------------------------- |
-| url      | `string`               | (required)           | Request URL                           |
-| method   | `string`               | `'GET'`              | Request method                        |
-| data     | `FormData` or `string` | `null`               | Data to be sent                       |
-| headers  | `object`               | `null`               | Custom headers object                 |
-| progress | `function`             | `(percentage) => {}` | Progress callback                     |
-| ratio    | `number`               | `90`                 | Max % of bar for *uploading* progress |
-
-```javascript
-const data = {
-  user: 22
-};
-
-const params = {
-  url: '/joinSurvey',
-  method: 'POST',
-  data: JSON.stringify(data),
-  headers: {
-    'content-type': 'application/json; charset=utf-8'
-  }
-};
-
-ajax.request(params)
-  .then(successCallback)
-  .catch(errorCallback);
-```
+- [ajax.get()](#ajaxget)
+- [ajax.post()](#ajaxpost)
+- [ajax.request()](#ajaxrequest)
+- [ajax.transport()](#ajaxtransport)
 
 ### ajax.get()
 
@@ -364,6 +123,38 @@ function sendForm() {
 </script>
 ```
 
+### ajax.request()
+
+Main function for all requests.
+
+| param    | type                   | default value        | description                           | 
+| -------- | ---------------------- | -------------------- | ------------------------------------- |
+| url      | `string`               | (required)           | Request URL                           |
+| method   | `string`               | `'GET'`              | Request method                        |
+| data     | `FormData` or `string` | `null`               | Data to be sent                       |
+| headers  | `object`               | `null`               | Custom headers object                 |
+| progress | `function`             | `(percentage) => {}` | Progress callback                     |
+| ratio    | `number`               | `90`                 | Max % of bar for *uploading* progress |
+
+```javascript
+const data = {
+  user: 22
+};
+
+const params = {
+  url: '/joinSurvey',
+  method: 'POST',
+  data: JSON.stringify(data),
+  headers: {
+    'content-type': 'application/json; charset=utf-8'
+  }
+};
+
+ajax.request(params)
+  .then(successCallback)
+  .catch(errorCallback);
+```
+
 ### ajax.transport()
 
 This is a function for uploading files from client. 
@@ -405,3 +196,200 @@ One simple button for uploading files.
 ```html
 <button onclick='ajax.transport({url: "/uploadFiles"}).then(successCallback).catch(errorCallback)'>Upload file<button>
 ```
+
+## Params
+
+List of params, their types, descriptions and examples.
+
+### url `string` (required)
+
+Target page URL.
+
+`/user/22`, `/getPage`, `/saveArticle`
+
+### method `string`
+
+> Used in `ajax.request()` function only
+
+Request method.
+
+`GET`, `POST`
+
+Read more about available request methods methods on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at developer.mozilla.org.
+
+### data `object|FormData|string|HTMLElement`
+
+> For `ajax.request()` use should encode data and add headers by yourself
+
+To avoid any unexpected troubles `ajax.request()` will not encode passed data by itself.
+
+```javascript
+const params = {
+  url: '/joinSurvey',
+  method: 'POST',
+  data: JSON.stringify({user: 22}),
+  headers: {
+    'content-type': 'application/json; charset=utf-8'
+  }
+};
+
+ajax.request(params)
+  .then(successCallback)
+  .catch(errorCallback);
+```
+
+```javascript
+const params = {
+  url: '/sendForm',
+  method: 'POST',
+  data: new FormData(document.getElementById('my-form'))
+};
+
+ajax.request(params)
+  .then(successCallback)
+  .catch(errorCallback);
+```
+
+> For `ajax.get()` you can pass `object` data
+
+Data will be encoded automatically.
+
+```javascript
+const params = {
+  url: '/getUserData',
+  data: {
+    user: 22
+  }
+};
+
+ajax.get(params)
+  .then(successCallback)
+  .catch(errorCallback);
+```
+
+is the same as
+
+```javascript
+const params = {
+  url: '/getUserData?user=22'
+};
+
+ajax.get(params)
+  .then(successCallback)
+  .catch(errorCallback);
+```
+
+> For `ajax.post()` you can pass data as `object`, `FormData` or `HTMLElement`
+
+> For `ajax.transport()` should pass `object` data if it is necessary
+
+You can send additional data with files.
+
+```javascript
+const params = {
+  url: '/uploadImage',
+  accept: 'image/*',
+  data: {
+    visible: true,
+    caption: 'Amazing pic'
+  },
+  fieldName: 'image'
+};
+
+ajax.transport(params)
+  .then(successCallback)
+  .catch(errorCallback);
+```
+
+### type `string`
+
+> Used in `ajax.post()` function only
+
+Specify the content type of data to be encoded (by ajax module) and sent.
+
+You can get value for this param from `ajax.contentType` object. Data will be encoded that way.
+
+| ajax.contentType | value                                              |
+| ---------------- | -------------------------------------------------- |
+| JSON             | `application/json; charset=utf-8`                  |
+| URLENCODED       | `application/x-www-form-urlencoded; charset=utf-8` |
+| FORM             | `multipart/form-data`                              |
+
+```javascript
+const params = {
+  // ...
+  
+  type: ajax.contentType.JSON 
+  // type: ajax.contentType.URLENCODED
+  // type: ajax.contentType.FORM
+};
+```
+
+### headers `object`
+
+Object of custom headers which will be added to request.
+
+```javascript
+headers = {
+  'authorization': 'Bearer eyJhbGciJ9...TJVA95OrM7h7HgQ',
+  // ...
+}
+```
+
+### progress `function`
+
+Almost all requests have responses. To show a correct progress for a call we need to combine a request progress (uploading) and a response progress (downloading). This ajax module uses one `progress` callback for it.
+
+```javascript
+/**
+ * @param {number} percentage - progress value from 0 to 100 
+ */
+var progressCallback = function progressCallback(percentage) {  
+    document.title = `${percentage}%`;
+};
+```
+
+Check out `ratio` param to show progress more accurate.
+
+### ratio `number`
+
+> Used with `progress` param
+
+Value should be in the `0`-`100` interval.
+
+If you know that some requests may take more time than their responses or vice versa, you can set up a `ratio` param and define a boundary between them on the progress bar.
+
+For example if you want to show progress for a file uploading process, you know that uploading will take a much more time than downloading response, then pass bigger ratio (~95). When you want to download big file — use smaller ratio (~5). 
+
+![](./assets/ratio-example.gif)
+
+### accept `string`
+
+> Used in `ajax.transport()` function only
+
+String of available types of files to be chosen by user.
+
+`*/*` — any files (default)
+
+`image/*` — only images 
+
+`image/png, image/jpg, image/bmp` — restrict accepted types 
+
+Read more about MIME-types on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types) at developer.mozilla.org.
+
+### multiple `boolean`
+
+> Used in `ajax.transport()` function only
+
+`false` by default. User can choose only one file.
+
+If you want to allow user choose more than a one file to be uploaded, then pass a `true` value.
+
+### fieldName `string`
+
+> Used in `ajax.transport()` function only
+
+Name of data field with the file or array of files.
+
+`files` by default. 
+
