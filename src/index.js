@@ -20,7 +20,6 @@ const utils = require('./utils');
  * @property {string} [accept=null]
  * @property {boolean} [multiple=false]
  * @property {string} [fieldName='files']
- * @property {HTMLElement} [form]
  */
 
 /**
