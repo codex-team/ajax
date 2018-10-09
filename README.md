@@ -62,14 +62,14 @@ ajax.get(params)
 
 Wrapper for a POST request over an `ajax.request()` function.
 
-| param    | type                                  | default value                       | description                           | 
-| -------- | ------------------------------------- | ----------------------------------- | ------------------------------------- |
-| url      | `string`                              | (required)                          | Request URL                           |
-| data     | `object`, `FormData` or `HTMLElement` | `null`                              | Data to be sent                       |
-| type     | `string`                              | `'application/json; charset=utf-8'` | Header from `ajax.contentType` object |
-| headers  | `object`                              | `null`                              | Custom headers object                 |
-| progress | `function`                            | `(percentage) => {}`                | Progress callback                     |
-| ratio    | `number`                              | `90`                                | Max % of bar for *uploading* progress | 
+| param    | type                                  | default value           | description                           | 
+| -------- | ------------------------------------- | ----------------------- | ------------------------------------- |
+| url      | `string`                              | (required)              | Request URL                           |
+| data     | `object`, `FormData` or `HTMLElement` | `null`                  | Data to be sent                       |
+| type     | `string`                              | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
+| headers  | `object`                              | `null`                  | Custom headers object                 |
+| progress | `function`                            | `(percentage) => {}`    | Progress callback                     |
+| ratio    | `number`                              | `90`                    | Max % of bar for *uploading* progress | 
 
 #### Example
 
