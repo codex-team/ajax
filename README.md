@@ -225,20 +225,17 @@ Request method.
 
 Read more about available request methods methods on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at developer.mozilla.org.
 
-### data `object|FormData|string|HTMLFormElement`
+### data `object|FormData|HTMLFormElement`
 
-> For `ajax.request()` use should encode data and add headers by yourself
+You can pass data as `object`, `FormData` or `HTMLFormElement`.
 
-To avoid any unexpected troubles `ajax.request()` will not encode passed data by itself.
+Data will be encoded automatically.
 
 ```javascript
 const params = {
   url: '/joinSurvey',
   method: 'POST',
-  data: JSON.stringify({user: 22}),
-  headers: {
-    'content-type': 'application/json; charset=utf-8'
-  }
+  data: {user: 22}
 };
 
 ajax.request(params)
@@ -260,7 +257,6 @@ ajax.request(params)
 
 > For `ajax.get()` you can pass `object` data
 
-Data will be encoded automatically.
 
 ```javascript
 const params = {
@@ -287,8 +283,6 @@ ajax.get(params)
   .catch(errorCallback);
 ```
 
-> For `ajax.post()` you can pass data as `object`, `FormData` or `HTMLFormElement`
-
 > For `ajax.transport()` should pass `object` data if it is necessary
 
 You can send additional data with files.
@@ -310,8 +304,6 @@ ajax.transport(params)
 ```
 
 ### type `string`
-
-> Used in `ajax.post()` function only
 
 Specify the content type of data to be encoded (by ajax module) and sent.
 
