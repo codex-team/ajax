@@ -1,8 +1,17 @@
 # AJAX
 
-Module for async requests on a native JavaScript.
+Tiny module for async requests on a native JavaScript for a browser.
 
 > Package has been renamed from `codex.ajax` to `@codexteam/ajax`
+
+## Features
+
+- zero-dependencies
+- based on [XMLHttpRequests](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
+- custom callback for a **progress** event
+- easy-to-use `transport` method: ask user for a file(s) and upload it
+- data to be send could be `object`, `FormData` or a FORM `HTMLElement`
+- with a [Promise polyfill](https://github.com/taylorhakes/promise-polyfill) 
 
 ## Installation
 
