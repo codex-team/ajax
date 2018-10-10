@@ -51,6 +51,12 @@ const ajax = (() => {
       params = validate(params);
 
       /**
+       * Convert Data
+       * @type {requestParams}
+       */
+      params = convertData(params);
+
+      /**
        * Create a new request object
        *
        * @type {XMLHttpRequest}
@@ -177,32 +183,10 @@ const ajax = (() => {
    */
   const get = function get(params) {
     /**
-     * Check passed params object
-     * @type {requestParams}
-     */
-    params = validate(params);
-
-    /**
      * Set up method
      * @type {string}
      */
     params.method = 'GET';
-
-    /**
-     * @type {string}
-     */
-    const covertedData = convertData(params.data, contentType.URLENCODED);
-
-    /**
-     * Remove this field because data will be stored in URL
-     */
-    delete params.data;
-
-    /**
-     * Add converted data to url
-     * @type {string}
-     */
-    params.url = /\?/.test(params.url) ? params.url + '&' + covertedData : params.url + '?' + covertedData;
 
     return request(params);
   };
@@ -216,43 +200,10 @@ const ajax = (() => {
    */
   const post = function post(params) {
     /**
-     * Check passed params object
-     * @type {requestParams}
-     */
-    params = validate(params);
-
-    /**
      * Set up method
      * @type {string}
      */
     params.method = 'POST';
-
-    /**
-     * Get type of data to be converted
-     * @type {string}
-     */
-    let dataType = getContentType(params);
-
-    /**
-     * If passed data is a form element or form data then change dataType
-     */
-    if (utils.isFormData(params.data) || utils.isFormElement(params.data)) {
-      dataType = contentType.FORM;
-    }
-
-    /**
-     * Convert data object according content type
-     * @type {object|FormData}
-     */
-    params.data = convertData(params.data, dataType);
-
-    /**
-     * We no need to add custom this header for FormData
-     * It will be generated automatically
-     */
-    if (dataType !== ajax.contentType.FORM) {
-      params.headers['content-type'] = dataType;
-    }
 
     return request(params);
   };
@@ -276,7 +227,7 @@ const ajax = (() => {
         /**
          * Append additional data
          */
-        if (params.data) {
+        if (utils.isObject(params.data)) {
           Object.keys(params.data).forEach(key => {
             const value = params.data[key];
 
@@ -289,12 +240,6 @@ const ajax = (() => {
          * @type {FormData}
          */
         params.data = formData;
-
-        /**
-         * Set content type
-         * @type {string}
-         */
-        params.type = contentType.FORM;
 
         /**
          * Send POST request
@@ -311,6 +256,9 @@ const ajax = (() => {
    * @return {requestParams}
    */
   const validate = function validate(params) {
+    /**
+     * Check for a URL emptiness
+     */
     if (!params.url || typeof params.url !== 'string') {
       throw new Error('Url must be a non-empty string');
     }
@@ -323,7 +271,7 @@ const ajax = (() => {
       throw new Error('`method` must be a string or null');
     }
 
-    params.method = params.method || 'GET';
+    params.method = params.method ? params.method.toUpperCase() : 'GET';
 
     /**
      * Check 'headers'
@@ -409,13 +357,76 @@ const ajax = (() => {
 
   /**
    * @private
-   * Convert data according passed content-type
+   * Convert data according request method
+   *
+   * @param {requestParams} params
+   * @return {requestParams}
+   */
+  const convertData = function convertData(params) {
+    switch (params.method) {
+      case 'GET':
+        /**
+         * @type {string}
+         */
+        const encodedData = encodeData(params.data, contentType.URLENCODED);
+
+        /**
+         * Remove this field because data will be stored in URL
+         */
+        delete params.data;
+
+        /**
+         * Add converted data to url
+         * @type {string}
+         */
+        params.url = /\?/.test(params.url) ? params.url + '&' + encodedData : params.url + '?' + encodedData;
+        break;
+
+      case 'POST':
+      case 'PUT':
+      case 'DELETE':
+      case 'UPDATE':
+        /**
+         * Get type of data to be converted
+         * @type {string}
+         */
+        let dataType = getContentType(params);
+
+        /**
+         * If passed data is a form element or form data then change dataType
+         */
+        if (utils.isFormData(params.data) || utils.isFormElement(params.data)) {
+          dataType = contentType.FORM;
+        }
+
+        /**
+         * Convert data object according content type
+         * @type {object|FormData}
+         */
+        params.data = encodeData(params.data, dataType);
+
+        /**
+         * We no need to add custom this header for FormData
+         * It will be generated automatically
+         */
+        if (dataType !== ajax.contentType.FORM) {
+          params.headers['content-type'] = dataType;
+        }
+        break;
+    }
+
+    return params;
+  };
+
+  /**
+   * @private
+   * Encode data according passed content-type
    *
    * @param {object|FormData|HTMLFormElement} data
    * @param {string} type - content type value {@see contentType}
    * @return {string|FormData|*}
    */
-  const convertData = function convertData(data = {}, type) {
+  const encodeData = function encodeData(data = {}, type) {
     switch (type) {
       case contentType.URLENCODED:
         return utils.urlEncode(data);

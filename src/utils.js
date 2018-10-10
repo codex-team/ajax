@@ -40,7 +40,7 @@ module.exports = class Utils {
     /**
      * If data is a FormData object
      */
-    if (Utils.isFormData(data)) {
+    if (this.isFormData(data)) {
       return data;
     }
 
@@ -54,7 +54,7 @@ module.exports = class Utils {
     /**
      * If data is just an object
      */
-    if (data instanceof Object && Object.keys(data).length) {
+    if (this.isObject(data)) {
       let requestData = new FormData();
 
       Object.keys(data).forEach(key => {
@@ -71,6 +71,16 @@ module.exports = class Utils {
      */
     throw new Error('`data` must be an instance of Object, FormData or <FORM> HTMLElement');
   }
+
+  /**
+   * Check if variable is an Object
+   *
+   * @param {*} obj
+   * @return {boolean}
+   */
+  static isObject(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+  };
 
   /**
    * Check if variable is an instance of FormData

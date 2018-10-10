@@ -39,7 +39,7 @@ There are a few public functions available to be used by user. All of them retur
 
 - [ajax.get()](#ajaxget) — wrapper for a GET request
 - [ajax.post()](#ajaxpost) — wrapper for a POST request
-- [ajax.request()](#ajaxrequest)
+- [ajax.request()](#ajaxrequest) — main function to make requests
 - [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
 
 ### ajax.get()
@@ -140,26 +140,21 @@ function sendForm() {
 
 Main function for all requests.
 
-| param    | type                   | default value        | description                           | 
-| -------- | ---------------------- | -------------------- | ------------------------------------- |
-| url      | `string`               | (required)           | Request URL                           |
-| method   | `string`               | `'GET'`              | Request method                        |
-| data     | `FormData` or `string` | `null`               | Data to be sent                       |
-| headers  | `object`               | `null`               | Custom headers object                 |
-| progress | `function`             | `(percentage) => {}` | Progress callback                     |
-| ratio    | `number`               | `90`                 | Max % of bar for *uploading* progress |
+| param    | type       | default value        | description                           | 
+| -------- | -----------| -------------------- | ------------------------------------- |
+| url      | `string`   | (required)           | Request URL                           |
+| method   | `string`   | `'GET'`              | Request method                        |
+| data     | `object`   | `null`               | Data to be sent                       |
+| headers  | `object`   | `null`               | Custom headers object                 |
+| progress | `function` | `(percentage) => {}` | Progress callback                     |
+| ratio    | `number`   | `90`                 | Max % of bar for *uploading* progress |
 
 ```javascript
-const data = {
-  user: 22
-};
-
 const params = {
   url: '/joinSurvey',
   method: 'POST',
-  data: JSON.stringify(data),
-  headers: {
-    'content-type': 'application/json; charset=utf-8'
+  data: {
+    user: 22
   }
 };
 
