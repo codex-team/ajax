@@ -1,6 +1,6 @@
 # AJAX
 
-Tiny module for async requests on a native JavaScript for a browser.
+Module for async requests on a native JavaScript for a browser.
 
 > Package has been renamed from `codex.ajax` to `@codexteam/ajax`
 
