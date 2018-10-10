@@ -10,7 +10,7 @@ Tiny module for async requests on a native JavaScript for a browser.
 - based on [XMLHttpRequests](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
 - custom callback for a **progress** event
 - easy-to-use `transport` method: ask user for a file(s) and upload it
-- data to be send could be `object`, `FormData` or a FORM `HTMLElement`
+- data to be send could be `object`, `FormData` or a `HTMLFormElement`
 - with a [Promise polyfill](https://github.com/taylorhakes/promise-polyfill) 
 
 ## Installation
@@ -37,10 +37,10 @@ Also you can get this module [from CDN](https://unpkg.com/@codexteam/ajax) or do
 
 There are a few public functions available to be used by user. All of them return Promise.
 
-- [ajax.get()](#ajaxget)
-- [ajax.post()](#ajaxpost)
+- [ajax.get()](#ajaxget) — wrapper for a GET request
+- [ajax.post()](#ajaxpost) — wrapper for a POST request
 - [ajax.request()](#ajaxrequest)
-- [ajax.transport()](#ajaxtransport)
+- [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
 
 ### ajax.get()
 
@@ -73,14 +73,14 @@ ajax.get(params)
 
 Wrapper for a POST request over an `ajax.request()` function.
 
-| param    | type                                  | default value           | description                           | 
-| -------- | ------------------------------------- | ----------------------- | ------------------------------------- |
-| url      | `string`                              | (required)              | Request URL                           |
-| data     | `object`, `FormData` or `HTMLElement` | `null`                  | Data to be sent                       |
-| type     | `string`                              | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
-| headers  | `object`                              | `null`                  | Custom headers object                 |
-| progress | `function`                            | `(percentage) => {}`    | Progress callback                     |
-| ratio    | `number`                              | `90`                    | Max % of bar for *uploading* progress | 
+| param    | type                                      | default value           | description                           | 
+| -------- | ----------------------------------------- | ----------------------- | ------------------------------------- |
+| url      | `string`                                  | (required)              | Request URL                           |
+| data     | `object`, `FormData` or `HTMLFormElement` | `null`                  | Data to be sent                       |
+| type     | `string`                                  | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
+| headers  | `object`                                  | `null`                  | Custom headers object                 |
+| progress | `function`                                | `(percentage) => {}`    | Progress callback                     |
+| ratio    | `number`                                  | `90`                    | Max % of bar for *uploading* progress | 
 
 #### Example
 
@@ -110,7 +110,7 @@ ajax.post(params)
 
 #### Example 
 
-To send any form you can pass `form` HTMLElement as a `data` to `ajax.post()`.
+To send any form you can pass HTMLFormElement as a `data` to `ajax.post()`.
 
 ```html
 <form id="form-element">
@@ -230,7 +230,7 @@ Request method.
 
 Read more about available request methods methods on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at developer.mozilla.org.
 
-### data `object|FormData|string|HTMLElement`
+### data `object|FormData|string|HTMLFormElement`
 
 > For `ajax.request()` use should encode data and add headers by yourself
 
@@ -292,7 +292,7 @@ ajax.get(params)
   .catch(errorCallback);
 ```
 
-> For `ajax.post()` you can pass data as `object`, `FormData` or `HTMLElement`
+> For `ajax.post()` you can pass data as `object`, `FormData` or `HTMLFormElement`
 
 > For `ajax.transport()` should pass `object` data if it is necessary
 

@@ -33,7 +33,7 @@ module.exports = class Utils {
   /**
    * Encode data to FormData object
    *
-   * @param {object|FormData|Element} data
+   * @param {object|FormData|HTMLElement} data
    * @return {FormData}
    */
   static formEncode(data) {
@@ -47,7 +47,7 @@ module.exports = class Utils {
     /**
      * If data is a FORM element
      */
-    if (data instanceof HTMLElement && data.tagName === 'FORM') {
+    if (this.isFormElement(data)) {
       return new FormData(data);
     }
 
@@ -83,13 +83,13 @@ module.exports = class Utils {
   };
 
   /**
-   * Check if variable is a «form» HTMLElement
+   * Check if variable is a HTMLFormElement
    *
    * @param {*} obj
    * @return {boolean}
    */
   static isFormElement(obj) {
-    return obj instanceof HTMLElement && obj.tagName === 'FORM';
+    return obj instanceof HTMLFormElement;
   }
 
   /**

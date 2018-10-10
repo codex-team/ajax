@@ -411,7 +411,7 @@ const ajax = (() => {
    * @private
    * Convert data according passed content-type
    *
-   * @param {object|FormData|HTMLElement} data
+   * @param {object|FormData|HTMLFormElement} data
    * @param {string} type - content type value {@see contentType}
    * @return {string|FormData|*}
    */
