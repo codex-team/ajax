@@ -7,11 +7,10 @@ Module for async requests on a native JavaScript for a browser.
 ## Features
 
 - zero-dependencies
-- based on [XMLHttpRequests](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
+- Promises based
 - custom callback for a **progress** event
 - easy-to-use `transport` method: ask user for a file(s) and upload it
-- data to be send could be `object`, `FormData` or a `HTMLFormElement`
-- with a [Promise polyfill](https://github.com/taylorhakes/promise-polyfill) 
+- `object`, `FormData` or `HTMLFormElement` data is being supported
 
 ## Installation
 
