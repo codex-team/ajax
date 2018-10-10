@@ -33,28 +33,28 @@ module.exports = class Utils {
   /**
    * Encode data to FormData object
    *
-   * @param {object|FormData|Element} data
+   * @param {object|FormData|HTMLElement} data
    * @return {FormData}
    */
   static formEncode(data) {
     /**
      * If data is a FormData object
      */
-    if (Utils.isFormData(data)) {
+    if (this.isFormData(data)) {
       return data;
     }
 
     /**
      * If data is a FORM element
      */
-    if (data instanceof HTMLElement && data.tagName === 'FORM') {
+    if (this.isFormElement(data)) {
       return new FormData(data);
     }
 
     /**
      * If data is just an object
      */
-    if (data instanceof Object && Object.keys(data).length) {
+    if (this.isObject(data)) {
       let requestData = new FormData();
 
       Object.keys(data).forEach(key => {
@@ -73,6 +73,16 @@ module.exports = class Utils {
   }
 
   /**
+   * Check if variable is an Object
+   *
+   * @param {*} obj
+   * @return {boolean}
+   */
+  static isObject(obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+  };
+
+  /**
    * Check if variable is an instance of FormData
    *
    * @param {*} obj
@@ -83,13 +93,13 @@ module.exports = class Utils {
   };
 
   /**
-   * Check if variable is a «form» HTMLElement
+   * Check if variable is a HTMLFormElement
    *
    * @param {*} obj
    * @return {boolean}
    */
   static isFormElement(obj) {
-    return obj instanceof HTMLElement && obj.tagName === 'FORM';
+    return obj instanceof HTMLFormElement;
   }
 
   /**

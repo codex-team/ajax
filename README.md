@@ -1,8 +1,16 @@
 # AJAX
 
-Module for async requests on a native JavaScript.
+Module for async requests on a native JavaScript for a browser.
 
 > Package has been renamed from `codex.ajax` to `@codexteam/ajax`
+
+## Features
+
+- zero-dependencies
+- Promises based
+- custom callback for a **progress** event
+- easy-to-use `transport` method: ask user for a file(s) and upload it
+- `object`, `FormData` or `HTMLFormElement` data is being supported
 
 ## Installation
 
@@ -28,10 +36,10 @@ Also you can get this module [from CDN](https://unpkg.com/@codexteam/ajax) or do
 
 There are a few public functions available to be used by user. All of them return Promise.
 
-- [ajax.get()](#ajaxget)
-- [ajax.post()](#ajaxpost)
-- [ajax.request()](#ajaxrequest)
-- [ajax.transport()](#ajaxtransport)
+- [ajax.get()](#ajaxget) — wrapper for a GET request
+- [ajax.post()](#ajaxpost) — wrapper for a POST request
+- [ajax.request()](#ajaxrequest) — main function to make requests
+- [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
 
 ### ajax.get()
 
@@ -64,14 +72,14 @@ ajax.get(params)
 
 Wrapper for a POST request over an `ajax.request()` function.
 
-| param    | type                                  | default value           | description                           | 
-| -------- | ------------------------------------- | ----------------------- | ------------------------------------- |
-| url      | `string`                              | (required)              | Request URL                           |
-| data     | `object`, `FormData` or `HTMLElement` | `null`                  | Data to be sent                       |
-| type     | `string`                              | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
-| headers  | `object`                              | `null`                  | Custom headers object                 |
-| progress | `function`                            | `(percentage) => {}`    | Progress callback                     |
-| ratio    | `number`                              | `90`                    | Max % of bar for *uploading* progress | 
+| param    | type                                      | default value           | description                           | 
+| -------- | ----------------------------------------- | ----------------------- | ------------------------------------- |
+| url      | `string`                                  | (required)              | Request URL                           |
+| data     | `object`, `FormData` or `HTMLFormElement` | `null`                  | Data to be sent                       |
+| type     | `string`                                  | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
+| headers  | `object`                                  | `null`                  | Custom headers object                 |
+| progress | `function`                                | `(percentage) => {}`    | Progress callback                     |
+| ratio    | `number`                                  | `90`                    | Max % of bar for *uploading* progress | 
 
 #### Example
 
@@ -101,7 +109,7 @@ ajax.post(params)
 
 #### Example 
 
-To send any form you can pass `form` HTMLElement as a `data` to `ajax.post()`.
+To send any form you can pass HTMLFormElement as a `data` to `ajax.post()`.
 
 ```html
 <form id="form-element">
@@ -131,26 +139,21 @@ function sendForm() {
 
 Main function for all requests.
 
-| param    | type                   | default value        | description                           | 
-| -------- | ---------------------- | -------------------- | ------------------------------------- |
-| url      | `string`               | (required)           | Request URL                           |
-| method   | `string`               | `'GET'`              | Request method                        |
-| data     | `FormData` or `string` | `null`               | Data to be sent                       |
-| headers  | `object`               | `null`               | Custom headers object                 |
-| progress | `function`             | `(percentage) => {}` | Progress callback                     |
-| ratio    | `number`               | `90`                 | Max % of bar for *uploading* progress |
+| param    | type       | default value        | description                           | 
+| -------- | -----------| -------------------- | ------------------------------------- |
+| url      | `string`   | (required)           | Request URL                           |
+| method   | `string`   | `'GET'`              | Request method                        |
+| data     | `object`   | `null`               | Data to be sent                       |
+| headers  | `object`   | `null`               | Custom headers object                 |
+| progress | `function` | `(percentage) => {}` | Progress callback                     |
+| ratio    | `number`   | `90`                 | Max % of bar for *uploading* progress |
 
 ```javascript
-const data = {
-  user: 22
-};
-
 const params = {
   url: '/joinSurvey',
   method: 'POST',
-  data: JSON.stringify(data),
-  headers: {
-    'content-type': 'application/json; charset=utf-8'
+  data: {
+    user: 22
   }
 };
 
@@ -221,20 +224,17 @@ Request method.
 
 Read more about available request methods methods on the [page](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at developer.mozilla.org.
 
-### data `object|FormData|string|HTMLElement`
+### data `object|FormData|HTMLFormElement`
 
-> For `ajax.request()` use should encode data and add headers by yourself
+You can pass data as `object`, `FormData` or `HTMLFormElement`.
 
-To avoid any unexpected troubles `ajax.request()` will not encode passed data by itself.
+Data will be encoded automatically.
 
 ```javascript
 const params = {
   url: '/joinSurvey',
   method: 'POST',
-  data: JSON.stringify({user: 22}),
-  headers: {
-    'content-type': 'application/json; charset=utf-8'
-  }
+  data: {user: 22}
 };
 
 ajax.request(params)
@@ -256,7 +256,6 @@ ajax.request(params)
 
 > For `ajax.get()` you can pass `object` data
 
-Data will be encoded automatically.
 
 ```javascript
 const params = {
@@ -283,8 +282,6 @@ ajax.get(params)
   .catch(errorCallback);
 ```
 
-> For `ajax.post()` you can pass data as `object`, `FormData` or `HTMLElement`
-
 > For `ajax.transport()` should pass `object` data if it is necessary
 
 You can send additional data with files.
@@ -306,8 +303,6 @@ ajax.transport(params)
 ```
 
 ### type `string`
-
-> Used in `ajax.post()` function only
 
 Specify the content type of data to be encoded (by ajax module) and sent.
 
