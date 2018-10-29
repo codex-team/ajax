@@ -168,16 +168,17 @@ This is a function for uploading files from client.
 
 User will be asked to choose a file (or multiple) to be uploaded. Then FormData object will be sent to the server via `ajax.post()` function.
 
-| param     | type       | default value        | description                           | 
-| --------  | ---------- | -------------------- | ------------------------------------- |
-| url       | `string`   | (required)           | Request URL                           |
-| data      | `object`   | `null`               | Additional data to be sent            |
-| accept    | `string`   | `null`               | Mime-types of accepted files          |
-| multiple  | `boolean`  | `false`              | Let user choose more than one file    |
-| fieldName | `string`   | `'files'`            | Name of field in form with files      |
-| headers   | `object`   | `null`               | Custom headers object                 |
-| progress  | `function` | `(percentage) => {}` | Progress callback                     |
-| ratio     | `number`   | `90`                 | Max % of bar for *uploading* progress |
+| param      | type       | default value        | description                                    | 
+| ---------- | ---------- | -------------------- | ---------------------------------------------- |
+| url        | `string`   | (required)           | Request URL                                    |
+| data       | `object`   | `null`               | Additional data to be sent                     |
+| accept     | `string`   | `null`               | Mime-types of accepted files                   |
+| multiple   | `boolean`  | `false`              | Let user choose more than one file             |
+| fieldName  | `string`   | `'files'`            | Name of field in form with files               |
+| headers    | `object`   | `null`               | Custom headers object                          |
+| progress   | `function` | `(percentage) => {}` | Progress callback                              |
+| ratio      | `number`   | `90`                 | Max % of bar for *uploading* progress          |
+| beforeSend | `function` | `(files) => {}`      | Fire callback with chosen files before sending |
 
 #### Example
 

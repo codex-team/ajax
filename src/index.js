@@ -14,10 +14,11 @@ const utils = require('./utils');
  * @property {string} [type]
  * @property {string|null} [method]
  * @property {object|FormData|null} [data]
- * @property {object} [headers]
- * @property {function|null} [progress]
+ * @property {object} [headers={}]
+ * @property {function} [progress]
+ * @property {function} [beforeSend]
  * @property {number} [ratio=90]
- * @property {string} [accept=null]
+ * @property {string|null} [accept=null]
  * @property {boolean} [multiple=false]
  * @property {string} [fieldName='files']
  */
@@ -297,6 +298,8 @@ const ajax = (() => {
     }
 
     params.progress = params.progress || ((percentage) => {});
+
+    params.beforeSend = params.beforeSend || ((files) => {});
 
     /**
      * Check 'ratio'
