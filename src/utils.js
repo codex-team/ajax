@@ -107,6 +107,7 @@ module.exports = class Utils {
    * @property {string} accept
    * @property {boolean} multiple
    * @property {string} fieldName
+   * @property {function} beforeSend
    */
 
   /**
@@ -158,6 +159,11 @@ module.exports = class Utils {
         for (let i = 0; i < files.length; i++) {
           formData.append(config.fieldName, files[i], files[i].name);
         }
+
+        /**
+         * Fire beforeSend callback on changed files field
+         */
+        config.beforeSend(files);
 
         /**
          * Return ready to be uploaded FormData object
