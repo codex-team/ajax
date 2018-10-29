@@ -148,6 +148,8 @@ Main function for all requests.
 | progress | `function` | `(percentage) => {}` | Progress callback                     |
 | ratio    | `number`   | `90`                 | Max % of bar for *uploading* progress |
 
+#### Example
+
 ```javascript
 const params = {
   url: '/joinSurvey',
