@@ -41,6 +41,30 @@ There are a few public functions available to be used by user. All of them retur
 - [ajax.request()](#ajaxrequest) — main function to make requests
 - [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
 
+### Callbacks format
+
+`successCallback` and `errorCallback` have the same input object `response` as a param.
+
+| param            | type                  | description                           | 
+| ---------------- | --------------------- | ------------------------------------- |
+| response.body    | `object` or `string`  | Response body parsed JSON or a string |
+| response.code    | `number`              | Response code                         |
+| response.headers | `object`              | Response headers object               |
+
+#### Example
+
+```javascript
+function successCallback(response) {
+  console.log('Response:', response.body);
+}
+```
+
+```javascript
+function errorCallback(response) {
+  console.log(`Error code ${response.code}. Response:`, response.body);
+}
+```
+
 ### ajax.get()
 
 Wrapper for a GET request over an `ajax.request()` function.
@@ -56,14 +80,12 @@ Wrapper for a GET request over an `ajax.request()` function.
 #### Example
 
 ```javascript
-const params = {
-  url: '/getUserData',
-  data: {
-    user: 22
-  }
-};
-
-ajax.get(params)
+ajax.get({
+ url: '/getUserData',
+ data: {
+   user: 22
+ }
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -86,7 +108,7 @@ Wrapper for a POST request over an `ajax.request()` function.
 Simple POST request
 
 ```javascript
-const params = {
+ajax.post({
   url: '/saveArticle',
   data: {
     title: 'Awesome article',
@@ -100,9 +122,7 @@ const params = {
   // type: ajax.contentType.JSON /* (default) */ 
   // type: ajax.contentType.URLENCODED
   // type: ajax.contentType.FORM
-};
-
-ajax.post(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -123,12 +143,10 @@ To send any form you can pass HTMLFormElement as a `data` to `ajax.post()`.
 function sendForm() {
   var form = document.getElementById('form-element');
   
-  var requestParams = {
+  ajax.post({
     url:'/addUser',
     data: form
-  };
-  
-  ajax.post(requestParams)
+  })
     .then(successCallback)
     .catch(errorCallback);
 } 
@@ -151,15 +169,13 @@ Main function for all requests.
 #### Example
 
 ```javascript
-const params = {
+ajax.request({
   url: '/joinSurvey',
   method: 'POST',
   data: {
     user: 22
   }
-};
-
-ajax.request(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -185,7 +201,7 @@ User will be asked to choose a file (or multiple) to be uploaded. Then FormData 
 #### Example
 
 ```javascript
-const params = {
+ajax.transport({
   url: '/uploadImage',
   accept: 'image/*',
   progress: function (percentage) {
@@ -193,9 +209,7 @@ const params = {
   },
   ratio: 95,
   fieldName: 'image'
-};
-
-ajax.transport(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -234,25 +248,21 @@ You can pass data as `object`, `FormData` or `HTMLFormElement`.
 Data will be encoded automatically.
 
 ```javascript
-const params = {
+ajax.request({
   url: '/joinSurvey',
   method: 'POST',
   data: {user: 22}
-};
-
-ajax.request(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
 
 ```javascript
-const params = {
+ajax.request({
   url: '/sendForm',
   method: 'POST',
   data: new FormData(document.getElementById('my-form'))
-};
-
-ajax.request(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -261,14 +271,12 @@ ajax.request(params)
 
 
 ```javascript
-const params = {
+ajax.get({
   url: '/getUserData',
   data: {
     user: 22
   }
-};
-
-ajax.get(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -276,11 +284,9 @@ ajax.get(params)
 is the same as
 
 ```javascript
-const params = {
+ajax.get({
   url: '/getUserData?user=22'
-};
-
-ajax.get(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
@@ -290,7 +296,7 @@ ajax.get(params)
 You can send additional data with files.
 
 ```javascript
-const params = {
+ajax.transport({
   url: '/uploadImage',
   accept: 'image/*',
   data: {
@@ -298,9 +304,7 @@ const params = {
     caption: 'Amazing pic'
   },
   fieldName: 'image'
-};
-
-ajax.transport(params)
+})
   .then(successCallback)
   .catch(errorCallback);
 ```
