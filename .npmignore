@@ -1,3 +1,6 @@
-.eslintrc
-assets/
 .idea/
+assets/
+src/
+.eslintrc
+index.html
+webpack.config.js
