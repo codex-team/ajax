@@ -48,7 +48,7 @@ There are a few public functions available to be used by user. All of them retur
 | param            | type                  | description                           | 
 | ---------------- | --------------------- | ------------------------------------- |
 | response.body    | `object` or `string`  | Response body parsed JSON or a string |
-| response.number  | `number`              | Response code                         |
+| response.code    | `number`              | Response code                         |
 | response.headers | `object`              | Response headers object               |
 
 #### Example

@@ -199,20 +199,37 @@ module.exports = class Utils {
   static parseHeaders(headersString) {
     /**
      * Convert the header string into an array of individual headers
+     * Split by line breaks
      */
-    let arr = headersString.trim().split(/[\r\n]+/);
+    let headersArray = headersString.trim().split(/[\r\n]+/);
 
     /**
      * Create a map of header names to values
      */
     let headerMap = {};
 
-    arr.forEach(function (line) {
-      const parts = line.split(': '),
-            header = parts.shift(),
-            value = parts.join(': ');
+    headersArray.forEach(function (line) {
+      /**
+       * Split header string by ": "
+       * @type {string[]}
+       */
+      const parts = line.split(': ');
 
-      headerMap[header] = value;
+      /**
+       * Get the first chunk of splitted string from array
+       * @type {string | undefined}
+       */
+      const header = parts.shift();
+
+      /**
+       * Join all chunks left in an array by separator
+       * @type {string}
+       */
+      const value = parts.join(': ');
+
+      if (header) {
+        headerMap[header] = value;
+      }
     });
 
     return headerMap;
