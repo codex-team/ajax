@@ -145,17 +145,32 @@ const ajax = (() => {
         if (XMLHTTP.readyState === 4) {
           /**
            * Get a response string
-           *
            * @type {string}
            */
-          let response = XMLHTTP.response;
+          let responseBody = XMLHTTP.response;
 
           /**
            * Try to parse response as a JSON
            */
           try {
-            response = JSON.parse(response);
+            responseBody = JSON.parse(responseBody);
           } catch (e) {}
+
+          /**
+           * Parse response headers
+           * @type {Object}
+           */
+          let headers = utils.parseHeaders(XMLHTTP.getAllResponseHeaders());
+
+          /**
+           * Compose response object
+           * @type {{body: string, code: number, headers: Object}}
+           */
+          let response = {
+            body: responseBody,
+            code: XMLHTTP.status,
+            headers: headers
+          };
 
           /**
            * Check for a response code
