@@ -177,4 +177,44 @@ module.exports = class Utils {
       inputElement.click();
     });
   };
+
+  /**
+   * Parse string of headers
+   *
+   * From
+   *   "cache-control: public, max-age=14400
+   *   content-type: application/json; charset=utf-8
+   *   ..."
+   *
+   * To
+   *   {
+   *     cache-control: "public, max-age=14400",
+   *     content-type: "application/json; charset=utf-8",
+   *     ...
+   *   }
+   *
+   * @param {string} headersString
+   * @return {object}
+   */
+  static parseHeaders(headersString) {
+    /**
+     * Convert the header string into an array of individual headers
+     */
+    let arr = headersString.trim().split(/[\r\n]+/);
+
+    /**
+     * Create a map of header names to values
+     */
+    let headerMap = {};
+
+    arr.forEach(function (line) {
+      const parts = line.split(': '),
+            header = parts.shift(),
+            value = parts.join(': ');
+
+      headerMap[header] = value;
+    });
+
+    return headerMap;
+  }
 };
