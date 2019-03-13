@@ -153,7 +153,6 @@ module.exports = class Utils {
        * Add onchange listener for «choose file» pop-up
        */
       inputElement.addEventListener('change', event => {
-
         /**
          * Get files from input field
          */
