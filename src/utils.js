@@ -139,9 +139,21 @@ module.exports = class Utils {
       }
 
       /**
+       * Do not show element
+       */
+      inputElement.style.display = "none";
+
+      /**
+       * Append element to the body
+       * Fix using module on mobile devices
+       */
+      document.body.appendChild(inputElement);
+
+      /**
        * Add onchange listener for «choose file» pop-up
        */
-      inputElement.addEventListener('change', (event) => {
+      inputElement.addEventListener('change', event => {
+
         /**
          * Get files from input field
          */
