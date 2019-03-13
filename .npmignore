@@ -1,6 +1,8 @@
 .idea/
 assets/
+dev/
 src/
 .eslintrc
 index.html
 webpack.config.js
+yarn.lock

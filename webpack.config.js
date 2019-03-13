@@ -15,7 +15,7 @@ module.exports = {
        * Process JS files
        */
       {
-        test : /\.js$/,
+        test: /\.js$/,
         exclude: /(node_modules)/,
         use: {
           loader: "babel-loader",
@@ -25,7 +25,5 @@ module.exports = {
         }
       }
     ]
-  },
-  watch: true,
-  mode: process.env.NODE_ENV || 'development'
+  }
 };
