@@ -111,12 +111,12 @@ module.exports = class Utils {
    */
 
   /**
-   * Create an ephemeral input file field and return FormData object with files
+   * Create an ephemeral input file field and return chosen files array
    *
    * @param {transportParams} config
-   * @return {Promise<FormData>}
+   * @return {Promise<FileList>}
    */
-  static selectFile(config = {}) {
+  static selectFiles(config = {}) {
     return new Promise((resolve, reject) => {
       /**
        * Create a new INPUT element
@@ -159,29 +159,9 @@ module.exports = class Utils {
         const files = event.target.files;
 
         /**
-         * Create a FormData object
-         * @type {FormData}
+         * Return ready to be uploaded files array
          */
-        let formData = new FormData();
-
-        /**
-         * Append files to FormData
-         */
-        for (let i = 0; i < files.length; i++) {
-          formData.append(config.fieldName, files[i], files[i].name);
-        }
-
-        if (config.beforeSend) {
-          /**
-           * Fire beforeSend callback on changed files field
-           */
-          config.beforeSend(files);
-        }
-
-        /**
-         * Return ready to be uploaded FormData object
-         */
-        resolve(formData);
+        resolve(files);
       }, false);
 
       /**

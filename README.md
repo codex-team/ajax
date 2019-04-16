@@ -40,7 +40,7 @@ There are a few public functions available to be used by user. All of them retur
 - [ajax.post()](#ajaxpost) — wrapper for a POST request
 - [ajax.request()](#ajaxrequest) — main function to make requests
 - [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
-- [ajax.selectFile()](#ajaxselectfile) — ask user for a file and return formData
+- [ajax.selectFiles()](#ajaxselectfiles) — ask user for a file and return files array
 
 ### Callbacks format
 
@@ -223,25 +223,23 @@ One simple button for uploading files.
 <button onclick='ajax.transport({url: "/uploadFiles"}).then(successCallback).catch(errorCallback)'>Upload file<button>
 ```
 
-### ajax.selectFile()
+### ajax.selectFiles()
 
-Ask user for a file (or multiple) and process it. FormData object will be returned in Promise.
+Ask user for a file (or multiple) and process it. FileList object will be returned in Promise.
 
 | param      | type       | default value        | description                                    | 
 | ---------- | ---------- | -------------------- | ---------------------------------------------- |
 | accept     | `string`   | `null`               | Mime-types of accepted files                   |
 | multiple   | `boolean`  | `false`              | Let user choose more than one file             |
-| fieldName  | `string`   | `'files'`            | Name of field in form with files               |
 
 #### Example
 
 ```javascript
-ajax.selectFile({
+ajax.selectFiles({
   accept: 'image/*',
   fieldName: 'image'
 })
-  .then(successCallback)
-  .catch(errorCallback);
+  .then(successCallback);
 ```
 
 ## Params

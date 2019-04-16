@@ -30,6 +30,7 @@
     "eslint-config-codex": "github:codex-team/eslint-config",
     "express": "^4.16.4",
     "http-build-query": "^0.7.0",
+    "multer": "^1.4.1",
     "nodemon": "^1.18.10",
     "promise-polyfill": "^8.1.0",
     "webpack": "^4.29.6",

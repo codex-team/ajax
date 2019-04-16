@@ -238,8 +238,21 @@ const ajax = (() => {
      */
     params = validate(params);
 
-    return utils.selectFile(params)
-      .then(formData => {
+    return utils.selectFiles(params)
+      .then(files => {
+        /**
+         * Create a FormData object
+         * @type {FormData}
+         */
+        let formData = new FormData();
+
+        /**
+         * Append files to FormData
+         */
+        for (let i = 0; i < files.length; i++) {
+          formData.append(params.fieldName, files[i], files[i].name);
+        }
+
         /**
          * Append additional data
          */
@@ -249,6 +262,13 @@ const ajax = (() => {
 
             formData.append(key, value);
           });
+        }
+
+        if (params.beforeSend) {
+          /**
+           * Fire beforeSend callback
+           */
+          params.beforeSend(files);
         }
 
         /**
@@ -460,9 +480,9 @@ const ajax = (() => {
   /**
    * Choose file and return FormData with them
    * @param {requestParams} params
-   * @return {Promise<FormData>}
+   * @return {Promise<FileList>}
    */
-  const selectFile = function (params) {
+  const selectFiles = function (params) {
     /**
      * Check passed params object
      * @type {requestParams}
@@ -474,7 +494,7 @@ const ajax = (() => {
      */
     delete params.beforeSend;
 
-    return utils.selectFile(params);
+    return utils.selectFiles(params);
   };
 
   return {
@@ -486,16 +506,15 @@ const ajax = (() => {
 
     /** GET request */
     get,
+
     /** POST request */
     post,
 
     /** Upload user-chosen files via POST request */
     transport,
 
-    /**
-     * Expose select file method for usage
-     */
-    selectFile
+    /** Expose select files method */
+    selectFiles
   };
 })();
 
