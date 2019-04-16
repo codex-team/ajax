@@ -116,7 +116,7 @@ module.exports = class Utils {
    * @param {transportParams} config
    * @return {Promise<FormData>}
    */
-  static transport(config) {
+  static selectFile(config = {}) {
     return new Promise((resolve, reject) => {
       /**
        * Create a new INPUT element
@@ -141,7 +141,7 @@ module.exports = class Utils {
       /**
        * Do not show element
        */
-      inputElement.style.display = "none";
+      inputElement.style.display = 'none';
 
       /**
        * Append element to the body
@@ -171,10 +171,12 @@ module.exports = class Utils {
           formData.append(config.fieldName, files[i], files[i].name);
         }
 
-        /**
-         * Fire beforeSend callback on changed files field
-         */
-        config.beforeSend(files);
+        if (config.beforeSend) {
+          /**
+           * Fire beforeSend callback on changed files field
+           */
+          config.beforeSend(files);
+        }
 
         /**
          * Return ready to be uploaded FormData object

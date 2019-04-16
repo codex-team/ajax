@@ -238,7 +238,7 @@ const ajax = (() => {
      */
     params = validate(params);
 
-    return utils.transport(params)
+    return utils.selectFile(params)
       .then(formData => {
         /**
          * Append additional data
@@ -275,8 +275,8 @@ const ajax = (() => {
     /**
      * Check for a URL emptiness
      */
-    if (!params.url || typeof params.url !== 'string') {
-      throw new Error('Url must be a non-empty string');
+    if (params.url && typeof params.url !== 'string') {
+      throw new Error('Url must be a string');
     }
 
     /**
@@ -457,6 +457,26 @@ const ajax = (() => {
     }
   };
 
+  /**
+   * Choose file and return FormData with them
+   * @param {requestParams} params
+   * @return {Promise<FormData>}
+   */
+  const selectFile = function (params) {
+    /**
+     * Check passed params object
+     * @type {requestParams}
+     */
+    params = validate(params);
+
+    /**
+     * We no need to call beforeSend function
+     */
+    delete params.beforeSend;
+
+    return utils.selectFile(params);
+  };
+
   return {
     /** Provide available content types for POST requests */
     contentType,
@@ -470,7 +490,12 @@ const ajax = (() => {
     post,
 
     /** Upload user-chosen files via POST request */
-    transport
+    transport,
+
+    /**
+     * Expose select file method for usage
+     */
+    selectFile
   };
 })();
 
