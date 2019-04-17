@@ -40,6 +40,7 @@ There are a few public functions available to be used by user. All of them retur
 - [ajax.post()](#ajaxpost) — wrapper for a POST request
 - [ajax.request()](#ajaxrequest) — main function to make requests
 - [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
+- [ajax.selectFiles()](#ajaxselectfiles) — ask user for a file and return files array
 
 ### Callbacks format
 
@@ -71,7 +72,7 @@ Wrapper for a GET request over an `ajax.request()` function.
 
 | param    | type       | default value        | description                         | 
 | -------- | ---------- | -------------------- | ----------------------------------- |
-| url      | `string`   | (required)           | Request URL                         |
+| url      | `string`   | `''`                 | Request URL                         |
 | data     | `object`   | `null`               | Data to be sent                     |
 | headers  | `object`   | `null`               | Custom headers object               |
 | progress | `function` | `(percentage) => {}` | Progress callback                   |
@@ -96,7 +97,7 @@ Wrapper for a POST request over an `ajax.request()` function.
 
 | param    | type                                      | default value           | description                           | 
 | -------- | ----------------------------------------- | ----------------------- | ------------------------------------- |
-| url      | `string`                                  | (required)              | Request URL                           |
+| url      | `string`                                  | `''`                    | Request URL                           |
 | data     | `object`, `FormData` or `HTMLFormElement` | `null`                  | Data to be sent                       |
 | type     | `string`                                  | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
 | headers  | `object`                                  | `null`                  | Custom headers object                 |
@@ -159,7 +160,7 @@ Main function for all requests.
 
 | param    | type       | default value        | description                           | 
 | -------- | -----------| -------------------- | ------------------------------------- |
-| url      | `string`   | (required)           | Request URL                           |
+| url      | `string`   | `''`                 | Request URL                           |
 | method   | `string`   | `'GET'`              | Request method                        |
 | data     | `object`   | `null`               | Data to be sent                       |
 | headers  | `object`   | `null`               | Custom headers object                 |
@@ -188,7 +189,7 @@ User will be asked to choose a file (or multiple) to be uploaded. Then FormData 
 
 | param      | type       | default value        | description                                    | 
 | ---------- | ---------- | -------------------- | ---------------------------------------------- |
-| url        | `string`   | (required)           | Request URL                                    |
+| url        | `string`   | `''`                 | Request URL                                    |
 | data       | `object`   | `null`               | Additional data to be sent                     |
 | accept     | `string`   | `null`               | Mime-types of accepted files                   |
 | multiple   | `boolean`  | `false`              | Let user choose more than one file             |
@@ -213,6 +214,7 @@ ajax.transport({
   .then(successCallback)
   .catch(errorCallback);
 ```
+
 #### Example
 
 One simple button for uploading files.
@@ -221,13 +223,31 @@ One simple button for uploading files.
 <button onclick='ajax.transport({url: "/uploadFiles"}).then(successCallback).catch(errorCallback)'>Upload file<button>
 ```
 
+### ajax.selectFiles()
+
+Ask user for a file (or multiple) and process it. FileList object will be returned in Promise.
+
+| param      | type       | default value        | description                                    | 
+| ---------- | ---------- | -------------------- | ---------------------------------------------- |
+| accept     | `string`   | `null`               | Mime-types of accepted files                   |
+| multiple   | `boolean`  | `false`              | Let user choose more than one file             |
+
+#### Example
+
+```javascript
+ajax.selectFiles({
+  accept: 'image/*'
+})
+  .then(successCallback);
+```
+
 ## Params
 
 List of params, their types, descriptions and examples.
 
-### url `string` (required)
+### url `string`
 
-Target page URL.
+Target page URL. By default current page url will be used.  
 
 `/user/22`, `/getPage`, `/saveArticle`
 
@@ -398,4 +418,3 @@ If you want to allow user choose more than a one file to be uploaded, then pass 
 Name of data field with the file or array of files.
 
 `files` by default. 
-

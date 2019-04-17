@@ -10,7 +10,7 @@ const utils = require('./utils');
 
 /**
  * @typedef {object} requestParams
- * @property {string} url
+ * @property {string} [url]
  * @property {string} [type]
  * @property {string|null} [method]
  * @property {object|FormData|null} [data]
@@ -238,8 +238,21 @@ const ajax = (() => {
      */
     params = validate(params);
 
-    return utils.transport(params)
-      .then(formData => {
+    return utils.selectFiles(params)
+      .then(files => {
+        /**
+         * Create a FormData object
+         * @type {FormData}
+         */
+        let formData = new FormData();
+
+        /**
+         * Append files to FormData
+         */
+        for (let i = 0; i < files.length; i++) {
+          formData.append(params.fieldName, files[i], files[i].name);
+        }
+
         /**
          * Append additional data
          */
@@ -249,6 +262,13 @@ const ajax = (() => {
 
             formData.append(key, value);
           });
+        }
+
+        if (params.beforeSend) {
+          /**
+           * Fire beforeSend callback
+           */
+          params.beforeSend(files);
         }
 
         /**
@@ -271,13 +291,15 @@ const ajax = (() => {
    * @param {requestParams} params
    * @return {requestParams}
    */
-  const validate = function validate(params) {
+  const validate = function validate(params = {}) {
     /**
-     * Check for a URL emptiness
+     * Check for a URL type
      */
-    if (!params.url || typeof params.url !== 'string') {
-      throw new Error('Url must be a non-empty string');
+    if (params.url && typeof params.url !== 'string') {
+      throw new Error('Url must be a string');
     }
+
+    params.url = params.url || '';
 
     /**
      * Check 'method'
@@ -457,6 +479,26 @@ const ajax = (() => {
     }
   };
 
+  /**
+   * Choose file and return FormData with them
+   * @param {requestParams} params
+   * @return {Promise<FileList>}
+   */
+  const selectFiles = function (params) {
+    /**
+     * Check passed params object
+     * @type {requestParams}
+     */
+    params = validate(params);
+
+    /**
+     * We no need to call beforeSend function
+     */
+    delete params.beforeSend;
+
+    return utils.selectFiles(params);
+  };
+
   return {
     /** Provide available content types for POST requests */
     contentType,
@@ -466,11 +508,15 @@ const ajax = (() => {
 
     /** GET request */
     get,
+
     /** POST request */
     post,
 
     /** Upload user-chosen files via POST request */
-    transport
+    transport,
+
+    /** Expose select files method */
+    selectFiles
   };
 })();
 

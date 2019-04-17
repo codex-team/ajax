@@ -111,12 +111,12 @@ module.exports = class Utils {
    */
 
   /**
-   * Create an ephemeral input file field and return FormData object with files
+   * Create an ephemeral input file field and return chosen files array
    *
    * @param {transportParams} config
-   * @return {Promise<FormData>}
+   * @return {Promise<FileList>}
    */
-  static transport(config) {
+  static selectFiles(config = {}) {
     return new Promise((resolve, reject) => {
       /**
        * Create a new INPUT element
@@ -141,7 +141,7 @@ module.exports = class Utils {
       /**
        * Do not show element
        */
-      inputElement.style.display = "none";
+      inputElement.style.display = 'none';
 
       /**
        * Append element to the body
@@ -159,27 +159,14 @@ module.exports = class Utils {
         const files = event.target.files;
 
         /**
-         * Create a FormData object
-         * @type {FormData}
+         * Return ready to be uploaded files array
          */
-        let formData = new FormData();
+        resolve(files);
 
         /**
-         * Append files to FormData
+         * Remove element from a DOM
          */
-        for (let i = 0; i < files.length; i++) {
-          formData.append(config.fieldName, files[i], files[i].name);
-        }
-
-        /**
-         * Fire beforeSend callback on changed files field
-         */
-        config.beforeSend(files);
-
-        /**
-         * Return ready to be uploaded FormData object
-         */
-        resolve(formData);
+        document.body.removeChild(inputElement);
       }, false);
 
       /**

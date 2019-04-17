@@ -1,9 +1,11 @@
-const express = require('express');
-const app = express();
-const port = 3000;
-
 const fs = require('fs');
 const path = require('path');
+
+const express = require('express');
+const multer = require('multer');
+
+const app = express();
+const port = 3000;
 
 /**
  * Return example page
@@ -27,10 +29,11 @@ app.get('/ajax.js', (req, res) => {
 /**
  * Process POST request
  */
-app.post('/', (req, res) => {
+app.post('/', multer({ dest: 'temp' }).array('files'), (req, res) => {
   const response = {
     success: 1,
-    message: '✅ OK'
+    message: '✅ OK',
+    files: req.files
   };
 
   res.setHeader('Content-Type', 'application/json');
