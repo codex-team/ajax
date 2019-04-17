@@ -72,7 +72,7 @@ Wrapper for a GET request over an `ajax.request()` function.
 
 | param    | type       | default value        | description                         | 
 | -------- | ---------- | -------------------- | ----------------------------------- |
-| url      | `string`   | (required)           | Request URL                         |
+| url      | `string`   | `''`                 | Request URL                         |
 | data     | `object`   | `null`               | Data to be sent                     |
 | headers  | `object`   | `null`               | Custom headers object               |
 | progress | `function` | `(percentage) => {}` | Progress callback                   |
@@ -97,7 +97,7 @@ Wrapper for a POST request over an `ajax.request()` function.
 
 | param    | type                                      | default value           | description                           | 
 | -------- | ----------------------------------------- | ----------------------- | ------------------------------------- |
-| url      | `string`                                  | (required)              | Request URL                           |
+| url      | `string`                                  | `''`                    | Request URL                           |
 | data     | `object`, `FormData` or `HTMLFormElement` | `null`                  | Data to be sent                       |
 | type     | `string`                                  | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
 | headers  | `object`                                  | `null`                  | Custom headers object                 |
@@ -160,7 +160,7 @@ Main function for all requests.
 
 | param    | type       | default value        | description                           | 
 | -------- | -----------| -------------------- | ------------------------------------- |
-| url      | `string`   | (required)           | Request URL                           |
+| url      | `string`   | `''`                 | Request URL                           |
 | method   | `string`   | `'GET'`              | Request method                        |
 | data     | `object`   | `null`               | Data to be sent                       |
 | headers  | `object`   | `null`               | Custom headers object                 |
@@ -189,7 +189,7 @@ User will be asked to choose a file (or multiple) to be uploaded. Then FormData 
 
 | param      | type       | default value        | description                                    | 
 | ---------- | ---------- | -------------------- | ---------------------------------------------- |
-| url        | `string`   | (required)           | Request URL                                    |
+| url        | `string`   | `''`                 | Request URL                                    |
 | data       | `object`   | `null`               | Additional data to be sent                     |
 | accept     | `string`   | `null`               | Mime-types of accepted files                   |
 | multiple   | `boolean`  | `false`              | Let user choose more than one file             |
@@ -246,9 +246,9 @@ ajax.selectFiles({
 
 List of params, their types, descriptions and examples.
 
-### url `string` (required)
+### url `string`
 
-Target page URL.
+Target page URL. Same url by default. 
 
 `/user/22`, `/getPage`, `/saveArticle`
 

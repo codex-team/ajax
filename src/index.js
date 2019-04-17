@@ -10,7 +10,7 @@ const utils = require('./utils');
 
 /**
  * @typedef {object} requestParams
- * @property {string} url
+ * @property {string} [url]
  * @property {string} [type]
  * @property {string|null} [method]
  * @property {object|FormData|null} [data]
@@ -291,13 +291,15 @@ const ajax = (() => {
    * @param {requestParams} params
    * @return {requestParams}
    */
-  const validate = function validate(params) {
+  const validate = function validate(params = {}) {
     /**
-     * Check for a URL emptiness
+     * Check for a URL type
      */
     if (params.url && typeof params.url !== 'string') {
       throw new Error('Url must be a string');
     }
+
+    params.uri = params.uri || '';
 
     /**
      * Check 'method'
