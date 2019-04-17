@@ -247,7 +247,7 @@ List of params, their types, descriptions and examples.
 
 ### url `string`
 
-Target page URL. Same url by default. 
+Target page URL. By default current page url will be used.  
 
 `/user/22`, `/getPage`, `/saveArticle`
 
@@ -418,4 +418,3 @@ If you want to allow user choose more than a one file to be uploaded, then pass 
 Name of data field with the file or array of files.
 
 `files` by default. 
-
