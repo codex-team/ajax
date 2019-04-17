@@ -236,8 +236,7 @@ Ask user for a file (or multiple) and process it. FileList object will be return
 
 ```javascript
 ajax.selectFiles({
-  accept: 'image/*',
-  fieldName: 'image'
+  accept: 'image/*'
 })
   .then(successCallback);
 ```
