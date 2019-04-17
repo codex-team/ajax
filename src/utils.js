@@ -162,6 +162,11 @@ module.exports = class Utils {
          * Return ready to be uploaded files array
          */
         resolve(files);
+
+        /**
+         * Remove element from a DOM
+         */
+        document.body.removeChild(inputElement);
       }, false);
 
       /**
