@@ -299,7 +299,7 @@ const ajax = (() => {
       throw new Error('Url must be a string');
     }
 
-    params.uri = params.uri || '';
+    params.url = params.url || '';
 
     /**
      * Check 'method'
