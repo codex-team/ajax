@@ -175,7 +175,7 @@ const ajax = (() => {
           /**
            * Check for a response code
            */
-          if (XMLHTTP.status === 200) {
+          if (isSuccessResponseCode(XMLHTTP.status)) {
             resolve(response);
           } else {
             reject(response);
@@ -497,6 +497,15 @@ const ajax = (() => {
     delete params.beforeSend;
 
     return utils.selectFiles(params);
+  };
+
+  /**
+   * Check for a success response code
+   * @param {number} code
+   * @returns {boolean}
+   */
+  const isSuccessResponseCode = function (code) {
+    return code >= 200 && code < 300;
   };
 
   return {
