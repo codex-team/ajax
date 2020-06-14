@@ -57,6 +57,13 @@ const ajax = (() => {
        */
       params = convertData(params);
 
+      if (params.beforeSend) {
+        /**
+         * Fire beforeSend callback
+         */
+        params.beforeSend();
+      }
+
       /**
        * Create a new request object
        *
@@ -264,12 +271,18 @@ const ajax = (() => {
           });
         }
 
-        if (params.beforeSend) {
-          /**
-           * Fire beforeSend callback
-           */
-          params.beforeSend(files);
-        }
+        /**
+         * beforeSend callback function copy
+         * @type {Function}
+         */
+        const newBeforeSend = params.beforeSend;
+
+        /**
+         * Reassigning beforeSend callback function to it`s copy with a given param
+         */
+        params.beforeSend = function () {
+          return newBeforeSend(files);
+        };
 
         /**
          * Save formData composed object to data field
