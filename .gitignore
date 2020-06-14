@@ -60,3 +60,4 @@ typings/
 #IDEA data
 .idea/
 .DS_Store
+dist/
