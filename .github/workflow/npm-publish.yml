@@ -29,4 +29,4 @@ jobs:
       - run: echo ::set-env name=PACKAGE_NAME::$(node -p "require('./package.json').name")
       - run: echo ::set-env name=PACKAGE_VERSION::$(node -p "require('./package.json').version")
       - run: echo ::set-env name=MESSAGE::"$EMOJI_PACKAGE [$PACKAGE_NAME](https://npmjs.com/package/$PACKAGE_NAME) $PACKAGE_VERSION was published"
-      - run: curl -X POST ${{ secrets.CODEX_BOT_WEBHOOK_HAWK }} -d "message=$MESSAGE" -d parse_mode=Markdown -d disable_web_page_preview=true
+      - run: curl -X POST ${{ secrets.CODEX_BOT_WEBHOOK_FRONTEND }} -d "message=$MESSAGE" -d parse_mode=Markdown -d disable_web_page_preview=true
