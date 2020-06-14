@@ -117,7 +117,7 @@ const ajax = (() => {
          */
         const recountedPercentage = Math.ceil(percentage * percentageForUploading / 100);
 
-        params.progress(recountedPercentage);
+        params.progress(Math.min(recountedPercentage, 100));
       }, false);
 
       /**
@@ -132,7 +132,7 @@ const ajax = (() => {
          */
         const recountedPercentage = Math.ceil(percentage * (100 - percentageForUploading) / 100) + percentageForUploading;
 
-        params.progress(recountedPercentage);
+        params.progress(Math.min(recountedPercentage, 100));
       }, false);
 
       /**
