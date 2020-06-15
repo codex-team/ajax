@@ -29,7 +29,7 @@ app.get('/ajax.js', (req, res) => {
 /**
  * Process POST request
  */
-app.post('/', multer({ dest: 'temp' }).array('files'), (req, res) => {
+app.post('/', multer({ dest: path.resolve(__dirname, 'temp') }).array('files'), (req, res) => {
   const response = {
     success: 1,
     message: '✅ OK',

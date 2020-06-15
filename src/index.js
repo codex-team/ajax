@@ -57,6 +57,13 @@ const ajax = (() => {
        */
       params = convertData(params);
 
+      if (params.beforeSend) {
+        /**
+         * Fire beforeSend callback
+         */
+        params.beforeSend();
+      }
+
       /**
        * Create a new request object
        *
@@ -110,7 +117,7 @@ const ajax = (() => {
          */
         const recountedPercentage = Math.ceil(percentage * percentageForUploading / 100);
 
-        params.progress(recountedPercentage);
+        params.progress(Math.min(recountedPercentage, 100));
       }, false);
 
       /**
@@ -125,7 +132,7 @@ const ajax = (() => {
          */
         const recountedPercentage = Math.ceil(percentage * (100 - percentageForUploading) / 100) + percentageForUploading;
 
-        params.progress(recountedPercentage);
+        params.progress(Math.min(recountedPercentage, 100));
       }, false);
 
       /**
@@ -175,7 +182,7 @@ const ajax = (() => {
           /**
            * Check for a response code
            */
-          if (XMLHTTP.status === 200) {
+          if (isSuccessResponseCode(XMLHTTP.status)) {
             resolve(response);
           } else {
             reject(response);
@@ -264,12 +271,18 @@ const ajax = (() => {
           });
         }
 
-        if (params.beforeSend) {
-          /**
-           * Fire beforeSend callback
-           */
-          params.beforeSend(files);
-        }
+        /**
+         * beforeSend callback function copy
+         * @type {Function}
+         */
+        const newBeforeSend = params.beforeSend;
+
+        /**
+         * Reassigning beforeSend callback function to it`s copy with a given param
+         */
+        params.beforeSend = function () {
+          return newBeforeSend(files);
+        };
 
         /**
          * Save formData composed object to data field
@@ -497,6 +510,15 @@ const ajax = (() => {
     delete params.beforeSend;
 
     return utils.selectFiles(params);
+  };
+
+  /**
+   * Check for a success response code
+   * @param {number} code
+   * @returns {boolean}
+   */
+  const isSuccessResponseCode = function (code) {
+    return code >= 200 && code < 300;
   };
 
   return {

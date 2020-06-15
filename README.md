@@ -38,7 +38,7 @@ There are a few public functions available to be used by user. All of them retur
 
 - [ajax.get()](#ajaxget) — wrapper for a GET request
 - [ajax.post()](#ajaxpost) — wrapper for a POST request
-- [ajax.request()](#ajaxrequest) — main function to make requests
+- [ajax.request()](#ajaxrequest) — main function to make requests (GET, POST, HEAD, PUT, DELETE, ...)
 - [ajax.transport()](#ajaxtransport) — ask user for a file and upload it
 - [ajax.selectFiles()](#ajaxselectfiles) — ask user for a file and return files array
 
@@ -70,13 +70,14 @@ function errorCallback(response) {
 
 Wrapper for a GET request over an `ajax.request()` function.
 
-| param    | type       | default value        | description                         | 
-| -------- | ---------- | -------------------- | ----------------------------------- |
-| url      | `string`   | `''`                 | Request URL                         |
-| data     | `object`   | `null`               | Data to be sent                     |
-| headers  | `object`   | `null`               | Custom headers object               |
-| progress | `function` | `(percentage) => {}` | Progress callback                   |
-| ratio    | `number`   | `90`                 | Max % of bar for uploading progress |
+| param      | type       | default value        | description                            | 
+| ---------- | ---------- | -------------------- | -------------------------------------- |
+| url        | `string`   | `''`                 | Request URL                            |
+| data       | `object`   | `null`               | Data to be sent                        |
+| headers    | `object`   | `null`               | Custom headers object                  |
+| progress   | `function` | `(percentage) => {}` | Progress callback                      |
+| ratio      | `number`   | `90`                 | Max % of bar for uploading progress    |
+| beforeSend | `function` | `null`               | Fire callback before sending a request | 
 
 #### Example
 
@@ -95,14 +96,15 @@ ajax.get({
 
 Wrapper for a POST request over an `ajax.request()` function.
 
-| param    | type                                      | default value           | description                           | 
-| -------- | ----------------------------------------- | ----------------------- | ------------------------------------- |
-| url      | `string`                                  | `''`                    | Request URL                           |
-| data     | `object`, `FormData` or `HTMLFormElement` | `null`                  | Data to be sent                       |
-| type     | `string`                                  | `ajax.contentType.JSON` | Header from `ajax.contentType` object |
-| headers  | `object`                                  | `null`                  | Custom headers object                 |
-| progress | `function`                                | `(percentage) => {}`    | Progress callback                     |
-| ratio    | `number`                                  | `90`                    | Max % of bar for *uploading* progress | 
+| param      | type                                      | default value           | description                            | 
+| ---------- | ----------------------------------------- | ----------------------- | -------------------------------------- |
+| url        | `string`                                  | `''`                    | Request URL                            |
+| data       | `object`, `FormData` or `HTMLFormElement` | `null`                  | Data to be sent                        |
+| type       | `string`                                  | `ajax.contentType.JSON` | Header from `ajax.contentType` object  |
+| headers    | `object`                                  | `null`                  | Custom headers object                  |
+| progress   | `function`                                | `(percentage) => {}`    | Progress callback                      |
+| ratio      | `number`                                  | `90`                    | Max % of bar for *uploading* progress  |
+| beforeSend | `function`                                | `null`                  | Fire callback before sending a request | 
 
 #### Example
 
@@ -158,14 +160,15 @@ function sendForm() {
 
 Main function for all requests.
 
-| param    | type       | default value        | description                           | 
-| -------- | -----------| -------------------- | ------------------------------------- |
-| url      | `string`   | `''`                 | Request URL                           |
-| method   | `string`   | `'GET'`              | Request method                        |
-| data     | `object`   | `null`               | Data to be sent                       |
-| headers  | `object`   | `null`               | Custom headers object                 |
-| progress | `function` | `(percentage) => {}` | Progress callback                     |
-| ratio    | `number`   | `90`                 | Max % of bar for *uploading* progress |
+| param      | type       | default value        | description                            | 
+| ---------- | -----------| -------------------- | -------------------------------------- |
+| url        | `string`   | `''`                 | Request URL                            |
+| method     | `string`   | `'GET'`              | Request method                         |
+| data       | `object`   | `null`               | Data to be sent                        |
+| headers    | `object`   | `null`               | Custom headers object                  |
+| progress   | `function` | `(percentage) => {}` | Progress callback                      |
+| ratio      | `number`   | `90`                 | Max % of bar for *uploading* progress  |
+| beforeSend | `function` | `(files) => {}`      | Fire callback before sending a request |
 
 #### Example
 
@@ -244,6 +247,18 @@ ajax.selectFiles({
 ## Params
 
 List of params, their types, descriptions and examples.
+
+* [url](#url)
+* [method](#method)
+* [data](#data)
+* [type](#type)
+* [beforeSend](#beforesend)
+* [headers](#headers)
+* [progress](#progress)
+* [ratio](#ratio)
+* [accept](#accept)
+* [multiple](#multiple)
+* [fieldName](#fieldname)
 
 ### url `string`
 
