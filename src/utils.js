@@ -126,7 +126,7 @@ module.exports = class Utils {
          * Create a new INPUT element
          * @type {HTMLElement}
          */
-        let inputElement = document.createElement('INPUT');
+        inputElement = document.createElement('INPUT');
 
         /**
          * Set a 'FILE' type for this input element
