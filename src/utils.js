@@ -121,7 +121,7 @@ module.exports = class Utils {
       /**
        * Check
        */
-      if (input === null) {
+      if (inputElement === null) {
         /**
          * Create a new INPUT element
          * @type {HTMLElement}
@@ -133,14 +133,6 @@ module.exports = class Utils {
          * @type {string}
          */
         inputElement.type = 'file';
-
-        if (config.multiple) {
-          inputElement.setAttribute('multiple', 'multiple');
-        }
-
-        if (config.accept) {
-          inputElement.setAttribute('accept', config.accept);
-        }
 
         /**
          * Do not show element
@@ -188,6 +180,46 @@ module.exports = class Utils {
          * Add onchange listener for «choose file» pop-up
          */
         inputElement.addEventListener('change', resolveFiles, false);
+      }
+
+      /**
+       * Check "multiple" config
+       */
+      if (config.multiple) {
+        /**
+         * Check already to have "multiple" attribute with input element
+         */
+        if (!inputElement.hasAttribute('multiple')) {
+          /**
+           * Add "multiple" attribute to input element
+           */
+          inputElement.setAttribute('multiple', 'multiple');
+        }
+      } else {
+        /**
+         * Remove "multiple" attribute from input element
+         */
+        inputElement.removeAttribute('multiple');
+      }
+
+      /**
+       * Check multiple "accept"
+       */
+      if (config.accept) {
+        /**
+         * Check already to have "accept" attribute with input element
+         */
+        if (!inputElement.hasAttribute('accept')) {
+          /**
+           * Add "accept" attribute to input element
+           */
+          inputElement.setAttribute('accept', config.accept);
+        }
+      } else {
+        /**
+         * Remove "multiple" attribute from input element
+         */
+        inputElement.removeAttribute('accept')
       }
 
       /**
