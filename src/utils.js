@@ -163,7 +163,7 @@ module.exports = class Utils {
           /**
            * Remove event handler for preventing memory leak
            */
-          inputElement.removeEventListener(resolveFiles);
+          inputElement.removeEventListener('change', resolveFiles);
 
           /**
            * Remove element from a DOM
