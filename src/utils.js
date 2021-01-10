@@ -119,7 +119,8 @@ module.exports = class Utils {
   static selectFiles(config = {}) {
     return new Promise((resolve, reject) => {
       /**
-       * Check
+       * Check cached INPUT element
+       * If inputElement is null, create INPUT element cache
        */
       if (inputElement === null) {
         /**
