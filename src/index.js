@@ -19,6 +19,7 @@ const utils = require('./utils');
  * @property {function} [beforeSend]
  * @property {number} [ratio=90]
  * @property {string|null} [accept=null]
+ * @property {boolean} [withCredentials=false]
  * @property {boolean} [multiple=false]
  * @property {string} [fieldName='files']
  */
@@ -75,6 +76,13 @@ const ajax = (() => {
        * Prepare ajax request
        */
       XMLHTTP.open(params.method, params.url);
+
+      /**
+       * Set up withCredentials param that allows to send cookies
+       */
+      if(typeof XMLHTTP.withCredentials !== 'undefined') {
+          XMLHTTP.withCredentials = params.withCredentials;
+      }
 
       /**
        * Add default X-Requested-With header to identify ajax-request on the backend-side
@@ -383,6 +391,15 @@ const ajax = (() => {
     params.multiple = params.multiple || false;
 
     /**
+     * Check 'withCredentials'
+     */
+    if (params.withCredentials && typeof params.withCredentials !== 'boolean') {
+        throw new Error('`withCredentials` must be a true or false');
+    }
+
+    params.withCredentials = params.withCredentials || false;
+
+      /**
      * Check 'fieldName'
      */
     if (params.fieldName && typeof params.fieldName !== 'string') {
